@@ -6,12 +6,11 @@
  * NativeWind for layout, theme-context for dynamic colors.
  */
 
-import { ConfirmModal, ImagePickerModal, ThemedButton, ThemeToggle } from '@/src/components';
+import { ConfirmModal, ImagePickerModal, PlaceholderImage, ThemedButton, ThemeToggle } from '@/src/components';
 import { useNotification, useSession, useTheme } from '@/src/context';
 import { resendEmailVerification, updateAvatar } from '@/src/services';
 import { formatDate } from '@/src/utils';
 import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import React, { useCallback, useState } from 'react';
@@ -132,7 +131,7 @@ const ProfileScreen = () => {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }}>
+    <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }} edges={['top', 'left', 'right']}>
       <ScrollView
         contentContainerClassName="px-6 pb-8"
         showsVerticalScrollIndicator={false}
@@ -147,38 +146,21 @@ const ProfileScreen = () => {
       >
         {/* Top Bar */}
         <View className="flex-row justify-between items-center pt-2 mb-6">
-          <Pressable onPress={() => router.back()} className="flex-row items-center" hitSlop={8}>
-            <Ionicons name="arrow-back" size={22} color={colors.primary} />
-            <Text className="text-base font-medium ml-1" style={{ color: colors.primary }}>Back</Text>
-          </Pressable>
-          <Text className="text-lg font-bold" style={{ color: colors.text }}>Profile</Text>
-          <View className="w-10" />
+          <Text className="text-xl font-bold" style={{ color: colors.text }}>Profile</Text>
+          <ThemeToggle variant="icon" />
         </View>
 
         {/* Avatar Section */}
         <View className="items-center mb-8">
           <Pressable onPress={() => setShowImagePicker(true)} disabled={uploadingAvatar}>
-            {displayAvatar ? (
-              <View
-                className="w-24 h-24 rounded-full items-center justify-center"
-                style={{ backgroundColor: colors.primaryLight }}
-              >
-                <Image
-                  source={{ uri: displayAvatar }}
-                  style={{ width: 96, height: 96, borderRadius: 48 }}
-                  contentFit="cover"
-                  transition={200}
-                  cachePolicy="memory-disk"
-                />
-              </View>
-            ) : (
-              <View
-                className="w-24 h-24 rounded-full items-center justify-center"
-                style={{ backgroundColor: colors.primaryLight }}
-              >
-                <Ionicons name="person" size={40} color={colors.textInverse} />
-              </View>
-            )}
+            <PlaceholderImage
+              uri={displayAvatar}
+              width={96}
+              height={96}
+              borderRadius={48}
+              placeholderIcon="person"
+              iconSize={40}
+            />
             {/* Edit badge */}
             <View
               className="absolute bottom-0 right-0 w-8 h-8 rounded-full items-center justify-center"

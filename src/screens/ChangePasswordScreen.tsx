@@ -98,6 +98,7 @@ const ChangePasswordScreen = () => {
                 onBlur={onBlur}
                 error={errors.currentPassword?.message}
                 nextInputRef={newPasswordRef}
+                editable={!isSubmitting}
               />
             )}
           />
@@ -115,6 +116,7 @@ const ChangePasswordScreen = () => {
                 onBlur={onBlur}
                 error={errors.newPassword?.message}
                 nextInputRef={confirmPasswordRef}
+                editable={!isSubmitting}
               />
             )}
           />
@@ -132,6 +134,7 @@ const ChangePasswordScreen = () => {
                 onBlur={onBlur}
                 error={errors.confirmPassword?.message}
                 onSubmitEditing={handleSubmit(onSubmit)}
+                editable={!isSubmitting}
               />
             )}
           />

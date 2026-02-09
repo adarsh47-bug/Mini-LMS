@@ -2,7 +2,7 @@
  * (app) Layout
  *
  * Stack navigator for authenticated screens.
- * All children require a valid session.
+ * Contains tabs group and stack-pushed screens (course detail, webview, etc.)
  */
 
 import { useTheme } from '@/src/context';
@@ -20,8 +20,10 @@ export default function AppLayout() {
         contentStyle: { backgroundColor: colors.background },
       }}
     >
-      <Stack.Screen name="index" options={{ title: 'Home' }} />
-      <Stack.Screen name="profile" options={{ title: 'Profile' }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="course/[id]" options={{ title: 'Course Detail' }} />
+      <Stack.Screen name="enrolled" options={{ title: 'My Courses' }} />
+      <Stack.Screen name="webview" options={{ title: 'Course Content' }} />
       <Stack.Screen name="change-password" options={{ title: 'Change Password' }} />
     </Stack>
   );

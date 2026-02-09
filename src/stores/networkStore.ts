@@ -11,9 +11,6 @@ export const useNetworkStore = create<NetworkState>()(
     subscribeWithSelector((set) => ({
       isConnected: true,
       setIsConnected: (isConnected) => {
-        // if (__DEV__) {
-        //   console.log(`🔄 Network: ${isConnected ? 'ONLINE' : 'OFFLINE'}`);
-        // }
         set({ isConnected });
       },
     })),

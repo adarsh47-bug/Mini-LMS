@@ -23,10 +23,8 @@ export const registerSchema = z.object({
     .min(3, 'Username must be at least 3 characters')
     .max(50, 'Username must be less than 50 characters')
     .trim(),
-  email: z.string()
-    .email('Enter a valid email address')
-    .trim()
-    .toLowerCase(),
+  email: z.email({ message: 'Enter a valid email address' })
+    .transform(val => val.toLowerCase()),
   password: z.string()
     .min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string()
@@ -49,10 +47,8 @@ export const changePasswordSchema = z.object({
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.string()
-    .email('Enter a valid email address')
-    .trim()
-    .toLowerCase(),
+  email: z.email({ message: 'Enter a valid email address' })
+    .transform(val => val.toLowerCase()),
 });
 
 // ============================================================================

@@ -1,20 +1,47 @@
 /**
  * HomeScreen
  *
- * Main authenticated screen. Shows user info, theme switcher, and sign-out.
- * Supports pull-to-refresh to re-fetch user profile data.
+ * Main authenticated dashboard. Shows user greeting, course stats,
+ * quick actions, and recent courses. Supports pull-to-refresh.
  * NativeWind for layout, theme-context for dynamic colors.
  */
 
-import { ConfirmModal, ThemedButton } from '@/src/components';
+import { ConfirmModal, CourseCard, ThemeToggle } from '@/src/components';
 import { LOGO, NAME } from '@/src/constants';
 import { useSession, useTheme } from '@/src/context';
+import { useBookmarkStore, useCourseStore } from '@/src/stores';
+import type { CourseListItem } from '@/src/types';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+/** Stat card for dashboard */
+function StatCard({
+  icon,
+  label,
+  value,
+  color,
+  bgColor,
+}: {
+  icon: React.ComponentProps<typeof Ionicons>['name'];
+  label: string;
+  value: string | number;
+  color: string;
+  bgColor: string;
+}) {
+  return (
+    <View className="flex-1 items-center py-4 px-2 rounded-2xl" style={{ backgroundColor: bgColor }}>
+      <View className="w-10 h-10 rounded-full items-center justify-center mb-2" style={{ backgroundColor: color + '20' }}>
+        <Ionicons name={icon} size={20} color={color} />
+      </View>
+      <Text className="text-xl font-bold" style={{ color }}>{value}</Text>
+      <Text className="text-[11px] mt-0.5 text-center" style={{ color: color + 'CC' }}>{label}</Text>
+    </View>
+  );
+}
 
 const HomeScreen = () => {
   const { colors } = useTheme();
@@ -23,14 +50,30 @@ const HomeScreen = () => {
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+  const courses = useCourseStore((s) => s.courses);
+  const isInitialized = useCourseStore((s) => s.isInitialized);
+  const fetchInitialCourses = useCourseStore((s) => s.fetchInitialCourses);
+  const bookmarkCount = useBookmarkStore((s) => s.bookmarkedIds.length);
+  const enrolledCount = useBookmarkStore((s) => s.enrolledIds.length);
+
+  // Initialize courses on mount
+  useEffect(() => {
+    if (!isInitialized) {
+      fetchInitialCourses();
+    }
+  }, [isInitialized, fetchInitialCourses]);
+
+  // Show up to 4 recent courses on dashboard
+  const recentCourses = useMemo(() => courses.slice(0, 4), [courses]);
+
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await refreshUser();
+      await Promise.all([refreshUser(), fetchInitialCourses()]);
     } finally {
       setRefreshing(false);
     }
-  }, [refreshUser]);
+  }, [refreshUser, fetchInitialCourses]);
 
   const handleSignOutConfirm = useCallback(async () => {
     setLoggingOut(true);
@@ -42,10 +85,14 @@ const HomeScreen = () => {
     }
   }, [signOut]);
 
+  const handleCoursePress = useCallback((courseId: number) => {
+    router.push(`/(app)/course/${courseId}` as any);
+  }, []);
+
   return (
-    <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }}>
+    <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }} edges={['top', 'left', 'right']}>
       <ScrollView
-        contentContainerClassName="px-6 pb-8"
+        contentContainerClassName="px-5 pb-8"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -57,88 +104,111 @@ const HomeScreen = () => {
         }
       >
         {/* Top Bar */}
-        <View className="flex-row justify-start items-center pt-2 mb-6">
-          <Image
-            source={LOGO}
-            style={{ width: 40, height: 40, marginHorizontal: 4 }}
-            contentFit="contain"
-            transition={200}
-          />
+        <View className="flex-row justify-between items-center pt-2 mb-5">
+          <View className="flex-row items-center">
+            <Image
+              source={LOGO}
+              style={{ width: 32, height: 32, marginRight: 8, borderRadius: 8 }}
+              contentFit="contain"
+              transition={200}
+            />
+            <Text className="text-xl font-bold" style={{ color: colors.text }}>
+              {NAME}
+            </Text>
+          </View>
+          <View className="flex-row items-center gap-2">
+            <ThemeToggle variant="icon" />
+            <Pressable
+              onPress={() => setShowSignOutModal(true)}
+              className="w-10 h-10 rounded-full items-center justify-center"
+              style={{ backgroundColor: colors.surfaceSecondary }}
+              hitSlop={8}
+            >
+              <Ionicons name="log-out-outline" size={20} color={colors.textSecondary} />
+            </Pressable>
+          </View>
+        </View>
+
+        {/* Greeting */}
+        <View className="mb-5">
+          <Text className="text-lg" style={{ color: colors.textSecondary }}>
+            Welcome back,
+          </Text>
           <Text className="text-2xl font-bold" style={{ color: colors.text }}>
-            {NAME}
+            {user?.username || 'Student'} 👋
           </Text>
         </View>
 
-        {/* User Card — tap to open profile */}
-        <Pressable
-          onPress={() => router.push('/(app)/profile')}
-          className="flex-row items-center p-4 rounded-2xl mb-6"
-          style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}
-        >
-          {user?.avatar?.url ? (
-            <View
-              className="w-14 h-14 rounded-full items-center justify-center"
-              style={{ backgroundColor: colors.primaryLight }}
-            >
-              <Image
-                source={{ uri: user.avatar.url }}
-                style={{ width: 56, height: 56, borderRadius: 28 }}
-                contentFit="cover"
-                transition={150}
-                cachePolicy="memory-disk"
-              />
-            </View>
-          ) : (
-            <View
-              className="w-14 h-14 rounded-full items-center justify-center"
-              style={{ backgroundColor: colors.primaryLight }}
-            >
-              <Ionicons name="person" size={28} color={colors.textInverse} />
-            </View>
-          )}
-          <View className="ml-3.5 flex-1">
-            <Text className="text-lg font-semibold" style={{ color: colors.text }}>
-              {user?.username || 'User'}
-            </Text>
-            <Text className="text-sm mt-0.5" style={{ color: colors.textSecondary }}>
-              {user?.email || ''}
-            </Text>
-            <View
-              className="self-start px-2.5 py-0.5 rounded-lg mt-1.5"
-              style={{ backgroundColor: colors.primaryLight + '20' }}
-            >
-              <Text className="text-xs font-semibold uppercase" style={{ color: colors.primary }}>
-                {user?.role || 'USER'}
-              </Text>
-            </View>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={colors.textTertiary} />
-        </Pressable>
-
-        {/* Placeholder Content */}
-        <View className="mb-6">
-          <Text className="text-lg font-semibold mb-3" style={{ color: colors.text }}>
-            Dashboard
-          </Text>
-          <View
-            className="p-8 rounded-2xl items-center justify-center"
-            style={{ backgroundColor: colors.surfaceSecondary }}
-          >
-            <Ionicons name="construct-outline" size={48} color={colors.textTertiary} />
-            <Text className="text-[15px] text-center mt-3 leading-[22px]" style={{ color: colors.textSecondary }}>
-              More features coming soon!{'\n'}Courses, lessons, and progress tracking.
-            </Text>
-          </View>
-        </View>
-
-        {/* Actions */}
-        <View className="mb-6 gap-3">
-          <ThemedButton
-            title="View Profile"
-            onPress={() => router.push('/(app)/profile')}
-            variant="primary"
+        {/* Stats Row */}
+        <View className="flex-row gap-3 mb-6">
+          <StatCard
+            icon="book"
+            label="Enrolled"
+            value={enrolledCount}
+            color={colors.primary}
+            bgColor={colors.surface}
+          />
+          <StatCard
+            icon="bookmark"
+            label="Bookmarks"
+            value={bookmarkCount}
+            color={colors.secondary}
+            bgColor={colors.surface}
+          />
+          <StatCard
+            icon="library"
+            label="Available"
+            value={courses.length}
+            color={colors.accent}
+            bgColor={colors.surface}
           />
         </View>
+
+        {/* Quick Actions */}
+        <View className="mb-6">
+          <Text className="text-base font-semibold mb-3" style={{ color: colors.text }}>
+            Quick Actions
+          </Text>
+          <View className="flex-row gap-3">
+            <QuickAction
+              icon="book-outline"
+              label="Browse Courses"
+              colors={colors}
+              onPress={() => router.push('/(app)/(tabs)/courses' as any)}
+            />
+            <QuickAction
+              icon="bookmark-outline"
+              label="My Bookmarks"
+              colors={colors}
+              onPress={() => router.push('/(app)/(tabs)/bookmarks' as any)}
+            />
+            <QuickAction
+              icon="person-outline"
+              label="My Profile"
+              colors={colors}
+              onPress={() => router.push('/(app)/(tabs)/profile' as any)}
+            />
+          </View>
+        </View>
+
+        {/* Recent Courses */}
+        {recentCourses.length > 0 && (
+          <View className="mb-4">
+            <View className="flex-row justify-between items-center mb-3">
+              <Text className="text-base font-semibold" style={{ color: colors.text }}>
+                Recent Courses
+              </Text>
+              <Pressable onPress={() => router.push('/(app)/(tabs)/courses' as any)}>
+                <Text className="text-sm font-medium" style={{ color: colors.primary }}>
+                  View All
+                </Text>
+              </Pressable>
+            </View>
+            {recentCourses.map((course: CourseListItem) => (
+              <CourseCard key={course.id} course={course} onPress={handleCoursePress} />
+            ))}
+          </View>
+        )}
       </ScrollView>
 
       {/* Sign Out Confirmation Modal */}
@@ -157,5 +227,31 @@ const HomeScreen = () => {
     </SafeAreaView>
   );
 };
+
+/** Quick action button */
+function QuickAction({
+  icon,
+  label,
+  colors,
+  onPress,
+}: {
+  icon: React.ComponentProps<typeof Ionicons>['name'];
+  label: string;
+  colors: ReturnType<typeof import('@/src/context').useTheme>['colors'];
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      className="flex-1 items-center py-4 rounded-2xl"
+      style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}
+    >
+      <Ionicons name={icon} size={22} color={colors.primary} />
+      <Text className="text-[11px] font-medium mt-2 text-center" style={{ color: colors.textSecondary }}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
 
 export default HomeScreen;

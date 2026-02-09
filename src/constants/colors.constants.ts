@@ -347,19 +347,3 @@ export function getThemeColors(mode: ThemeMode): ColorTheme {
   return mode === 'light' ? LightTheme : DarkTheme;
 }
 
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-/**
- * Default export: Light theme (current active theme)
- */
-export const Colors = LightTheme;
-
-/**
- * Named exports for specific use cases
- */
-export {
-  DarkTheme as DarkColors, LightTheme as LightColors
-};
-

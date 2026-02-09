@@ -132,6 +132,7 @@ const ForgotPasswordScreen = () => {
                 autoCorrect={false}
                 textContentType="emailAddress"
                 onSubmitEditing={handleSubmit(onSubmit)}
+                editable={!isSubmitting}
               />
             )}
           />

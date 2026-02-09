@@ -120,6 +120,7 @@ const RegisterScreen = () => {
                 autoCorrect={false}
                 textContentType="username"
                 nextInputRef={emailRef}
+                editable={!isSubmitting}
               />
             )}
           />
@@ -141,6 +142,7 @@ const RegisterScreen = () => {
                 autoCorrect={false}
                 textContentType="emailAddress"
                 nextInputRef={passwordRef}
+                editable={!isSubmitting}
               />
             )}
           />
@@ -160,6 +162,7 @@ const RegisterScreen = () => {
                 isPassword
                 textContentType="newPassword"
                 nextInputRef={confirmPasswordRef}
+                editable={!isSubmitting}
               />
             )}
           />
@@ -179,6 +182,7 @@ const RegisterScreen = () => {
                 isPassword
                 textContentType="newPassword"
                 onSubmitEditing={handleSubmit(onSubmit)}
+                editable={!isSubmitting}
               />
             )}
           />

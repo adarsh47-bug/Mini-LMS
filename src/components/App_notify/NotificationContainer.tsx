@@ -31,9 +31,9 @@ export const NotificationContainer: React.FC<NotificationContainerProps> = ({ no
 
   /**
    * Tab Screen Detection Logic
-   * works: /home, /bookmark, /profile
+   * works: /, /courses, /bookmarks, /profile
    */
-  const isTabScreen = /^\/(home|bookmark|profile)($|\/|$)/.test(pathname ?? '')
+  const isTabScreen = /^\/(courses|bookmarks|profile)?($|\/|$)/.test(pathname ?? '')
 
   // Calculate proper bottom offset:
   // - On tab screens: account for tab bar height (base + safe area + offline indicator)

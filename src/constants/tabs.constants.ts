@@ -7,7 +7,7 @@ export const OFFLINE_INDICATOR_HEIGHT = 25;
 /**
  * Base tab bar height (without safe area or offline indicator)
  */
-export const BASE_TAB_BAR_HEIGHT = 50;
+export const BASE_TAB_BAR_HEIGHT = 60;
 
 /**
  * Get dynamic tab indicator inset based on connection state

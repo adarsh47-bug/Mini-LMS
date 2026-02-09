@@ -1,5 +1,5 @@
 /**
- * (app)/index — Authenticated Home Screen
+ * (app)/(tabs)/index — Home Tab
  *
  * Route file only — delegates to HomeScreen.
  */

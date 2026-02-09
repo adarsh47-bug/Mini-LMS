@@ -101,6 +101,7 @@ const LoginScreen = () => {
                 autoCorrect={false}
                 textContentType="username"
                 nextInputRef={passwordRef}
+                editable={!isSubmitting}
               />
             )}
           />
@@ -120,6 +121,7 @@ const LoginScreen = () => {
                 isPassword
                 textContentType="password"
                 onSubmitEditing={handleSubmit(onSubmit)}
+                editable={!isSubmitting}
               />
             )}
           />
