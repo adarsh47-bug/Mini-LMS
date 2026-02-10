@@ -36,7 +36,10 @@
         "VIBRATE",
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -74,6 +77,12 @@
       "eas": {
         "projectId": "66b4effc-31cf-47d7-9852-120ae76a18ae"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/66b4effc-31cf-47d7-9852-120ae76a18ae"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

@@ -10,11 +10,13 @@ import { ConfirmModal, ImagePickerModal, PlaceholderImage, ThemedButton, ThemeTo
 import { useNotification, useSession, useTheme } from '@/src/context';
 import { resendEmailVerification, updateAvatar } from '@/src/services';
 import { useBookmarkStore } from '@/src/stores';
-import { formatDate } from '@/src/utils';
+import { formatDate, formatDateTime } from '@/src/utils';
 import { Ionicons } from '@expo/vector-icons';
+import * as Application from 'expo-application';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import * as Updates from 'expo-updates';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -48,8 +50,39 @@ const ProfileScreen = () => {
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [resendingVerification, setResendingVerification] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const [lastUpdateTime, setLastUpdateTime] = useState<Date | null>(null);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const displayAvatar = avatarUri || user?.avatar?.url;
+
+  // Auto-check for updates on mount
+  useEffect(() => {
+    const checkForUpdates = async () => {
+      try {
+        // Get last update time
+        const lastUpdate = await Application.getLastUpdateTimeAsync();
+        setLastUpdateTime(lastUpdate);
+
+        // Only check for updates in production builds (not in dev mode)
+        if (!__DEV__ && Updates.isEnabled) {
+          const update = await Updates.checkForUpdateAsync();
+          if (update.isAvailable) {
+            setUpdateAvailable(true);
+            // Auto-download and apply update
+            await Updates.fetchUpdateAsync();
+            notification.success('Update downloaded! Restart app to apply.');
+            // Optional: Auto-reload the app
+            // await Updates.reloadAsync();
+          }
+        }
+      } catch (error) {
+        console.error('Error checking for updates:', error);
+      }
+    };
+
+    checkForUpdates();
+  }, [notification]);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -132,6 +165,49 @@ const ProfileScreen = () => {
   const handleChangePassword = useCallback(() => {
     router.push('/(app)/change-password');
   }, []);
+
+  const handleCheckUpdates = useCallback(async () => {
+    setCheckingUpdate(true);
+    try {
+      // Get latest update time
+      const lastUpdate = await Application.getLastUpdateTimeAsync();
+      setLastUpdateTime(lastUpdate);
+
+      // Check for updates (skip in dev mode)
+      if (__DEV__) {
+        notification.info('Update check is disabled in development mode.');
+        return;
+      }
+
+      if (!Updates.isEnabled) {
+        notification.info('Updates are not enabled for this build.');
+        return;
+      }
+
+      const update = await Updates.checkForUpdateAsync();
+
+      if (update.isAvailable) {
+        setUpdateAvailable(true);
+        notification.success('New update available! Downloading...');
+
+        // Download the update
+        await Updates.fetchUpdateAsync();
+        notification.success('Update downloaded! Restarting app...');
+
+        // Reload the app to apply the update
+        await Updates.reloadAsync();
+      } else {
+        setUpdateAvailable(false);
+        notification.success('You are on the latest version!');
+      }
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'Failed to check for updates';
+      notification.error(msg);
+      console.error('Update check error:', error);
+    } finally {
+      setCheckingUpdate(false);
+    }
+  }, [notification]);
 
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }} edges={['top', 'left', 'right']}>
@@ -322,6 +398,44 @@ const ProfileScreen = () => {
               accessibilityHint="Opens confirmation dialog to sign out"
             />
           </View>
+        </View>
+
+        {/* App Updates Section */}
+        <View
+          className="rounded-2xl p-4 mb-6"
+          style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}
+        >
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-base font-semibold" style={{ color: colors.text }}>App Updates</Text>
+            {updateAvailable && (
+              <View className="px-2 py-1 rounded-full" style={{ backgroundColor: colors.primary + '20' }}>
+                <Text className="text-xs font-semibold" style={{ color: colors.primary }}>Update Available</Text>
+              </View>
+            )}
+          </View>
+
+          {lastUpdateTime && (
+            <View className="mb-3 flex-row items-center">
+              <Ionicons name="time-outline" size={16} color={colors.textSecondary} />
+              <Text className="text-xs ml-2" style={{ color: colors.textSecondary }}>
+                Last updated: {formatDateTime(lastUpdateTime)}
+              </Text>
+            </View>
+          )}
+
+          <ThemedButton
+            title={checkingUpdate ? 'Checking...' : 'Check for Updates'}
+            onPress={handleCheckUpdates}
+            variant="outline"
+            disabled={checkingUpdate}
+            accessibilityHint="Checks for available app updates"
+          />
+
+          <Text className="text-xs mt-3" style={{ color: colors.textTertiary }}>
+            {__DEV__
+              ? '⚠️ Update checking is disabled in development mode'
+              : 'App automatically checks for updates on launch'}
+          </Text>
         </View>
       </ScrollView>
 
