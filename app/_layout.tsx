@@ -2,13 +2,12 @@
  * Root Layout
  *
  * Wraps the entire app in SessionProvider (auth), ThemeProvider (theming),
- * and NotificationProvider (unified notifications).
+ * NotificationProvider (unified notifications), and ErrorBoundary for error handling.
  * Uses Stack.Protected to redirect based on auth state per Expo Router pattern.
  */
 
-import { NotificationContainer } from '@/src/components';
-import { NetworkChangeNotification, OfflineIndicator } from '@/src/components';
-import { SessionProvider, useSession, NotificationProvider, useNotification, ThemeProvider, useTheme } from '@/src/context';
+import { ErrorBoundary, NetworkChangeNotification, NotificationContainer, OfflineIndicator } from '@/src/components';
+import { NotificationProvider, SessionProvider, ThemeProvider, useNotification, useSession, useTheme } from '@/src/context';
 import { useNetworkMonitor } from '@/src/hooks';
 import { SplashScreen, Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -22,19 +21,21 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <KeyboardProvider>
-        <ThemeProvider>
-          <NotificationProvider>
-            <SessionProvider>
-              <SplashScreenController />
-              <RootNavigator />
-              <GlobalUIComponents />
-            </SessionProvider>
-          </NotificationProvider>
-        </ThemeProvider>
-      </KeyboardProvider>
-    </SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider>
+        <KeyboardProvider>
+          <ThemeProvider>
+            <NotificationProvider>
+              <SessionProvider>
+                <SplashScreenController />
+                <RootNavigator />
+                <GlobalUIComponents />
+              </SessionProvider>
+            </NotificationProvider>
+          </ThemeProvider>
+        </KeyboardProvider>
+      </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }
 

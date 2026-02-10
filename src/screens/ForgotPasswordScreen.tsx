@@ -66,7 +66,7 @@ const ForgotPasswordScreen = () => {
         >
           <Ionicons name="mail-outline" size={40} color={colors.success} />
         </View>
-        <Text className="text-2xl font-bold mb-2 text-center" style={{ color: colors.text }}>
+        <Text className="text-2xl font-bold mb-2 text-center" style={{ color: colors.text }} accessibilityRole="header">
           Check Your Email
         </Text>
         <Text className="text-base text-center leading-6 mb-8" style={{ color: colors.textSecondary }}>
@@ -88,7 +88,14 @@ const ForgotPasswordScreen = () => {
         bottomOffset={Platform.OS === 'ios' ? 20 : 0}
       >
         {/* Back Button */}
-        <Pressable onPress={handleBack} className="flex-row items-center mb-8" hitSlop={8}>
+        <Pressable
+          onPress={handleBack}
+          className="flex-row items-center mb-8"
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+          accessibilityHint="Returns to login screen"
+        >
           <Ionicons name="arrow-back" size={22} color={colors.primary} />
           <Text className="text-base font-medium ml-1" style={{ color: colors.primary }}>
             Back
@@ -98,7 +105,7 @@ const ForgotPasswordScreen = () => {
         {/* Header */}
         <View className="mb-8">
           <Ionicons name="lock-open-outline" size={48} color={colors.primary} />
-          <Text className="text-[28px] font-bold mt-4 mb-2" style={{ color: colors.text }}>
+          <Text className="text-[28px] font-bold mt-4 mb-2" style={{ color: colors.text }} accessibilityRole="header">
             Forgot Password?
           </Text>
           <Text className="text-[15px] leading-6" style={{ color: colors.textSecondary }}>
@@ -109,8 +116,14 @@ const ForgotPasswordScreen = () => {
         {/* Form */}
         <View className="mb-6">
           {error ? (
-            <View className="p-3 rounded-xl mb-4" style={{ backgroundColor: colors.errorLight }}>
-              <Text className="text-sm font-medium text-center" style={{ color: colors.errorDark }}>
+            <View
+              className="p-3 rounded-xl mb-4"
+              style={{ backgroundColor: colors.errorLight }}
+              accessible
+              accessibilityRole="alert"
+              accessibilityLabel={`Error: ${error}`}
+            >
+              <Text className="text-sm font-medium text-center" style={{ color: colors.errorDark }} accessible={false}>
                 {error}
               </Text>
             </View>
@@ -133,6 +146,8 @@ const ForgotPasswordScreen = () => {
                 textContentType="emailAddress"
                 onSubmitEditing={handleSubmit(onSubmit)}
                 editable={!isSubmitting}
+                accessibilityLabel="Email Address"
+                accessibilityHint="Enter your email address to receive password reset instructions"
               />
             )}
           />
@@ -143,6 +158,7 @@ const ForgotPasswordScreen = () => {
             loading={isSubmitting}
             disabled={isSubmitting}
             style={{ marginTop: 8 }}
+            accessibilityHint="Sends password reset instructions to your email"
           />
         </View>
       </KeyboardAwareScrollView>

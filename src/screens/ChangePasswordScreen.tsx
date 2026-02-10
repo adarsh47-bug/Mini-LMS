@@ -61,7 +61,14 @@ const ChangePasswordScreen = () => {
       >
         {/* Top Bar */}
         <View className="flex-row items-center pt-2 mb-6">
-          <Pressable onPress={() => router.back()} className="flex-row items-center" hitSlop={8}>
+          <Pressable
+            onPress={() => router.back()}
+            className="flex-row items-center"
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Back"
+            accessibilityHint="Returns to previous screen"
+          >
             <Ionicons name="arrow-back" size={22} color={colors.primary} />
             <Text className="text-base font-medium ml-1" style={{ color: colors.primary }}>Back</Text>
           </Pressable>
@@ -75,7 +82,7 @@ const ChangePasswordScreen = () => {
           >
             <Ionicons name="lock-closed" size={30} color={colors.primary} />
           </View>
-          <Text className="text-2xl font-bold" style={{ color: colors.text }}>
+          <Text className="text-2xl font-bold" style={{ color: colors.text }} accessibilityRole="header">
             Change Password
           </Text>
           <Text className="text-sm text-center mt-1" style={{ color: colors.textSecondary }}>
@@ -99,6 +106,8 @@ const ChangePasswordScreen = () => {
                 error={errors.currentPassword?.message}
                 nextInputRef={newPasswordRef}
                 editable={!isSubmitting}
+                accessibilityLabel="Current Password"
+                accessibilityHint="Enter your current password for verification"
               />
             )}
           />
@@ -117,6 +126,8 @@ const ChangePasswordScreen = () => {
                 error={errors.newPassword?.message}
                 nextInputRef={confirmPasswordRef}
                 editable={!isSubmitting}
+                accessibilityLabel="New Password"
+                accessibilityHint="Enter a new secure password"
               />
             )}
           />
@@ -135,6 +146,8 @@ const ChangePasswordScreen = () => {
                 error={errors.confirmPassword?.message}
                 onSubmitEditing={handleSubmit(onSubmit)}
                 editable={!isSubmitting}
+                accessibilityLabel="Confirm New Password"
+                accessibilityHint="Re-enter your new password to confirm"
               />
             )}
           />
@@ -147,6 +160,7 @@ const ChangePasswordScreen = () => {
             onPress={handleSubmit(onSubmit)}
             loading={isSubmitting}
             disabled={isSubmitting}
+            accessibilityHint="Updates your account password"
           />
         </View>
       </KeyboardAwareScrollView>

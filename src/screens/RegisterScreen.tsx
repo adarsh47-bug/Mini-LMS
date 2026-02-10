@@ -86,8 +86,11 @@ const RegisterScreen = () => {
             style={{ width: 64, height: 64, borderRadius: 16, marginBottom: 12 }}
             contentFit="contain"
             transition={200}
+            accessible
+            accessibilityRole="image"
+            accessibilityLabel={`${NAME} logo`}
           />
-          <Text className="text-[28px] font-bold mb-1" style={{ color: colors.text }}>
+          <Text className="text-[28px] font-bold mb-1" style={{ color: colors.text }} accessibilityRole="header">
             Create Account
           </Text>
           <Text className="text-[15px] text-center" style={{ color: colors.textSecondary }}>
@@ -98,8 +101,15 @@ const RegisterScreen = () => {
         {/* Form */}
         <View className="mb-6">
           {authError ? (
-            <View className="p-3 rounded-xl mb-4" style={{ backgroundColor: colors.errorLight }}>
-              <Text className="text-sm font-medium text-center" style={{ color: colors.errorDark }}>
+            <View
+              className="p-3 rounded-xl mb-4"
+              style={{ backgroundColor: colors.errorLight }}
+              accessible
+              accessibilityRole="alert"
+              accessibilityLabel={`Error: ${authError}`}
+              accessibilityLiveRegion="assertive"
+            >
+              <Text className="text-sm font-medium text-center" style={{ color: colors.errorDark }} accessible={false}>
                 {authError}
               </Text>
             </View>
@@ -121,6 +131,8 @@ const RegisterScreen = () => {
                 textContentType="username"
                 nextInputRef={emailRef}
                 editable={!isSubmitting}
+                accessibilityLabel="Username"
+                accessibilityHint="Choose a unique username for your account"
               />
             )}
           />
@@ -143,6 +155,8 @@ const RegisterScreen = () => {
                 textContentType="emailAddress"
                 nextInputRef={passwordRef}
                 editable={!isSubmitting}
+                accessibilityLabel="Email address"
+                accessibilityHint="Enter your email address for account verification"
               />
             )}
           />
@@ -163,6 +177,8 @@ const RegisterScreen = () => {
                 textContentType="newPassword"
                 nextInputRef={confirmPasswordRef}
                 editable={!isSubmitting}
+                accessibilityLabel="Password"
+                accessibilityHint="Create a strong password for your account"
               />
             )}
           />
@@ -183,6 +199,8 @@ const RegisterScreen = () => {
                 textContentType="newPassword"
                 onSubmitEditing={handleSubmit(onSubmit)}
                 editable={!isSubmitting}
+                accessibilityLabel="Confirm Password"
+                accessibilityHint="Re-enter your password to confirm"
               />
             )}
           />
@@ -193,6 +211,8 @@ const RegisterScreen = () => {
             loading={isSubmitting}
             disabled={isSubmitting}
             style={{ marginTop: 8 }}
+            accessibilityLabel="Create Account"
+            accessibilityHint="Creates a new account with provided information"
           />
         </View>
 
@@ -201,7 +221,13 @@ const RegisterScreen = () => {
           <Text className="text-sm" style={{ color: colors.textSecondary }}>
             Already have an account?{' '}
           </Text>
-          <Pressable onPress={handleGoToLogin} hitSlop={8}>
+          <Pressable
+            onPress={handleGoToLogin}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Sign In"
+            accessibilityHint="Navigate back to login screen"
+          >
             <Text className="text-sm font-semibold" style={{ color: colors.primary }}>
               Sign In
             </Text>

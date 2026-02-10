@@ -11,11 +11,11 @@ import { useTheme } from '@/src/context';
 import { useBookmarkStore, useCourseStore } from '@/src/stores';
 import type { CourseListItem } from '@/src/types';
 import { Ionicons } from '@expo/vector-icons';
+import { LegendList } from '@legendapp/list';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
-  FlatList,
   Pressable,
   RefreshControl,
   Text,
@@ -120,6 +120,9 @@ const CourseListScreen = () => {
             onPress={fetchInitialCourses}
             className="mt-4 px-6 py-2.5 rounded-xl"
             style={{ backgroundColor: colors.primary }}
+            accessibilityRole="button"
+            accessibilityLabel="Retry"
+            accessibilityHint="Retry loading courses"
           >
             <Text className="text-sm font-semibold" style={{ color: colors.textInverse }}>
               Retry
@@ -161,7 +164,7 @@ const CourseListScreen = () => {
       {/* Header */}
       <View className="px-5 pt-2 pb-3">
         <View className="flex-row items-center justify-between mb-3">
-          <Text className="text-2xl font-bold" style={{ color: colors.text }}>
+          <Text className="text-2xl font-bold" style={{ color: colors.text }} accessibilityRole="header">
             Courses
           </Text>
           <View className="flex-row items-center gap-2">
@@ -171,6 +174,9 @@ const CourseListScreen = () => {
               className="relative w-10 h-10 rounded-full items-center justify-center"
               style={{ backgroundColor: colors.surfaceSecondary }}
               hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={`Enrolled courses${enrolledCount > 0 ? `, ${enrolledCount} enrolled` : ''}`}
+              accessibilityHint="View your enrolled courses"
             >
               <Ionicons name="school-outline" size={20} color={colors.text} />
               {enrolledCount > 0 && (
@@ -190,6 +196,9 @@ const CourseListScreen = () => {
               className="relative w-10 h-10 rounded-full items-center justify-center"
               style={{ backgroundColor: colors.surfaceSecondary }}
               hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={`Bookmarks${bookmarkCount > 0 ? `, ${bookmarkCount} bookmarked` : ''}`}
+              accessibilityHint="View your bookmarked courses"
             >
               <Ionicons name="bookmark-outline" size={20} color={colors.text} />
               {bookmarkCount > 0 && (
@@ -226,9 +235,17 @@ const CourseListScreen = () => {
             placeholderTextColor={colors.textTertiary}
             returnKeyType="search"
             autoCorrect={false}
+            accessibilityLabel="Search courses"
+            accessibilityHint="Search by course title, category, or instructor name"
           />
           {searchQuery.length > 0 && (
-            <Pressable onPress={() => setSearchQuery('')} hitSlop={8}>
+            <Pressable
+              onPress={() => setSearchQuery('')}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel="Clear search"
+              accessibilityHint="Clears the search field"
+            >
               <Ionicons name="close-circle" size={18} color={colors.textTertiary} />
             </Pressable>
           )}
@@ -244,7 +261,7 @@ const CourseListScreen = () => {
           </Text>
         </View>
       ) : (
-        <FlatList
+        <LegendList
           data={filteredCourses}
           renderItem={renderCourseItem}
           keyExtractor={keyExtractor}
@@ -262,10 +279,6 @@ const CourseListScreen = () => {
               colors={[colors.primary]}
             />
           }
-          initialNumToRender={6}
-          maxToRenderPerBatch={8}
-          windowSize={5}
-          removeClippedSubviews
         />
       )}
     </SafeAreaView>

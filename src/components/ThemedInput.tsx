@@ -23,6 +23,8 @@ interface ThemedInputProps extends TextInputProps {
   containerStyle?: ViewStyle;
   isPassword?: boolean;
   nextInputRef?: React.RefObject<TextInput | null>;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 
 const ThemedInput = forwardRef<TextInput, ThemedInputProps>(function ThemedInput({
@@ -34,6 +36,8 @@ const ThemedInput = forwardRef<TextInput, ThemedInputProps>(function ThemedInput
   style,
   returnKeyType,
   onSubmitEditing,
+  accessibilityLabel,
+  accessibilityHint,
   ...props
 }, ref) {
   const { colors } = useTheme();
@@ -78,11 +82,21 @@ const ThemedInput = forwardRef<TextInput, ThemedInputProps>(function ThemedInput
           autoCapitalize={isPassword ? 'none' : props.autoCapitalize}
           returnKeyType={returnKeyType || (nextInputRef ? 'next' : 'done')}
           onSubmitEditing={handleSubmitEditing}
-          blurOnSubmit={!nextInputRef}
+          submitBehavior={nextInputRef ? 'submit' : 'blurAndSubmit'}
+          accessibilityLabel={accessibilityLabel || label || props.placeholder}
+          accessibilityHint={accessibilityHint}
+          accessibilityState={{ disabled: props.editable === false }}
           {...props}
         />
         {isPassword ? (
-          <Pressable onPress={toggleSecure} className="pl-2" hitSlop={8}>
+          <Pressable
+            onPress={toggleSecure}
+            className="pl-2"
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={secureEntry ? 'Show password' : 'Hide password'}
+            accessibilityHint="Toggles password visibility"
+          >
             <Ionicons
               name={secureEntry ? 'eye-off-outline' : 'eye-outline'}
               size={20}

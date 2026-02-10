@@ -27,6 +27,8 @@ interface BookmarkState {
   bookmarkCount: () => number;
   /** Get total enrolled count */
   enrolledCount: () => number;
+  /** Reset all bookmark data (for logout) */
+  reset: () => void;
 }
 
 export const useBookmarkStore = create<BookmarkState>()(
@@ -63,6 +65,13 @@ export const useBookmarkStore = create<BookmarkState>()(
 
         bookmarkCount: () => get().bookmarkedIds.length,
         enrolledCount: () => get().enrolledIds.length,
+
+        reset: () => {
+          set({
+            bookmarkedIds: [],
+            enrolledIds: [],
+          });
+        },
       }),
       {
         name: 'bookmark-store',

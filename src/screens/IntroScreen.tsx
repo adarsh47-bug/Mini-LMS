@@ -42,8 +42,11 @@ const IntroScreen = () => {
           style={{ width: 96, height: 96, borderRadius: 24, marginBottom: 16 }}
           contentFit="contain"
           transition={200}
+          accessible
+          accessibilityRole="image"
+          accessibilityLabel={`${NAME} logo`}
         />
-        <Text className="text-3xl font-extrabold mb-2" style={{ color: colors.text }}>
+        <Text className="text-3xl font-extrabold mb-2" style={{ color: colors.text }} accessibilityRole="header">
           {NAME}
         </Text>
         <Text className="text-base text-center leading-6" style={{ color: colors.textSecondary }}>
@@ -58,9 +61,11 @@ const IntroScreen = () => {
             key={feat.label}
             className="w-[48%] py-5 px-4 rounded-2xl items-center mb-3"
             style={{ backgroundColor: colors.surfaceSecondary }}
+            accessible
+            accessibilityLabel={`Feature: ${feat.label}`}
           >
             <Ionicons name={feat.icon} size={28} color={colors.primary} />
-            <Text className="text-sm font-semibold mt-2" style={{ color: colors.text }}>
+            <Text className="text-sm font-semibold mt-2" style={{ color: colors.text }} accessible={false}>
               {feat.label}
             </Text>
           </View>
@@ -69,12 +74,18 @@ const IntroScreen = () => {
 
       {/* CTA Buttons */}
       <View className="mt-auto gap-2 pb-4">
-        <ThemedButton title="Get Started" onPress={handleRegister} size="lg" />
+        <ThemedButton
+          title="Get Started"
+          onPress={handleRegister}
+          size="lg"
+          accessibilityHint="Navigate to registration screen to create a new account"
+        />
         <ThemedButton
           title="I already have an account"
           onPress={handleLogin}
           variant="outline"
           size="md"
+          accessibilityHint="Navigate to login screen to sign in"
         />
       </View>
     </SafeAreaView>

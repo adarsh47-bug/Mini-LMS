@@ -77,12 +77,19 @@ export const NetworkChangeNotification: React.FC = () => {
           style={{ backgroundColor: colors.success }}
           className="mx-4 mt-2 rounded-lg shadow-lg"
         >
-          <View className="px-4 py-3 flex-row items-center justify-between">
+          <View
+            className="px-4 py-3 flex-row items-center justify-between"
+            accessible
+            accessibilityRole="alert"
+            accessibilityLabel="You're back online!"
+            accessibilityLiveRegion="polite"
+          >
             <View className="flex-row items-center flex-1">
               <MaterialIcons name="wifi" size={18} color={colors.white} />
               <Text
                 style={{ color: colors.white }}
                 className="text-sm font-medium ml-2"
+                accessible={false}
               >
                 You're back online!
               </Text>
@@ -92,6 +99,9 @@ export const NetworkChangeNotification: React.FC = () => {
               onPress={hide}
               className="ml-3 p-1"
               hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel="Dismiss notification"
+              accessibilityHint="Closes the back online notification"
             >
               <MaterialIcons name="close" size={18} color={colors.white} />
             </Pressable>

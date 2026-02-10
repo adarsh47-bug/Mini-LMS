@@ -39,6 +39,8 @@ interface CourseState {
   loadCourseDetail: (productId: number) => Promise<void>;
   /** Clear course detail */
   clearCourseDetail: () => void;
+  /** Reset all course data (for logout) */
+  reset: () => void;
 }
 
 export const useCourseStore = create<CourseState>()(
@@ -123,6 +125,21 @@ export const useCourseStore = create<CourseState>()(
       },
 
       clearCourseDetail: () => set({ courseDetail: null }),
+
+      reset: () => {
+        set({
+          courses: [],
+          courseDetail: null,
+          isLoading: false,
+          isLoadingMore: false,
+          isLoadingDetail: false,
+          error: null,
+          currentPage: 1,
+          totalPages: 1,
+          hasNextPage: false,
+          isInitialized: false,
+        });
+      },
     }),
     { name: 'course-store' },
   ),

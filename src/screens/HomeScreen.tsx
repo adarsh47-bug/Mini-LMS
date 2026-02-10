@@ -33,12 +33,18 @@ function StatCard({
   bgColor: string;
 }) {
   return (
-    <View className="flex-1 items-center py-4 px-2 rounded-2xl" style={{ backgroundColor: bgColor }}>
+    <View
+      className="flex-1 items-center py-4 px-2 rounded-2xl"
+      style={{ backgroundColor: bgColor }}
+      accessible
+      accessibilityRole="summary"
+      accessibilityLabel={`${value} ${label}`}
+    >
       <View className="w-10 h-10 rounded-full items-center justify-center mb-2" style={{ backgroundColor: color + '20' }}>
         <Ionicons name={icon} size={20} color={color} />
       </View>
-      <Text className="text-xl font-bold" style={{ color }}>{value}</Text>
-      <Text className="text-[11px] mt-0.5 text-center" style={{ color: color + 'CC' }}>{label}</Text>
+      <Text className="text-xl font-bold" style={{ color }} accessible={false}>{value}</Text>
+      <Text className="text-[11px] mt-0.5 text-center" style={{ color: color + 'CC' }} accessible={false}>{label}</Text>
     </View>
   );
 }
@@ -111,8 +117,11 @@ const HomeScreen = () => {
               style={{ width: 32, height: 32, marginRight: 8, borderRadius: 8 }}
               contentFit="contain"
               transition={200}
+              accessible
+              accessibilityRole="image"
+              accessibilityLabel={`${NAME} logo`}
             />
-            <Text className="text-xl font-bold" style={{ color: colors.text }}>
+            <Text className="text-xl font-bold" style={{ color: colors.text }} accessibilityRole="header">
               {NAME}
             </Text>
           </View>
@@ -123,6 +132,9 @@ const HomeScreen = () => {
               className="w-10 h-10 rounded-full items-center justify-center"
               style={{ backgroundColor: colors.surfaceSecondary }}
               hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel="Sign Out"
+              accessibilityHint="Opens sign out confirmation dialog"
             >
               <Ionicons name="log-out-outline" size={20} color={colors.textSecondary} />
             </Pressable>
@@ -198,7 +210,12 @@ const HomeScreen = () => {
               <Text className="text-base font-semibold" style={{ color: colors.text }}>
                 Recent Courses
               </Text>
-              <Pressable onPress={() => router.push('/(app)/(tabs)/courses' as any)}>
+              <Pressable
+                onPress={() => router.push('/(app)/(tabs)/courses' as any)}
+                accessibilityRole="button"
+                accessibilityLabel="View All Courses"
+                accessibilityHint="Opens full course catalog"
+              >
                 <Text className="text-sm font-medium" style={{ color: colors.primary }}>
                   View All
                 </Text>
@@ -245,9 +262,12 @@ function QuickAction({
       onPress={onPress}
       className="flex-1 items-center py-4 rounded-2xl"
       style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityHint={`Opens ${label} screen`}
     >
       <Ionicons name={icon} size={22} color={colors.primary} />
-      <Text className="text-[11px] font-medium mt-2 text-center" style={{ color: colors.textSecondary }}>
+      <Text className="text-[11px] font-medium mt-2 text-center" style={{ color: colors.textSecondary }} accessible={false}>
         {label}
       </Text>
     </Pressable>

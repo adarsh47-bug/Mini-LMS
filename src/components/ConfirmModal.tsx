@@ -47,23 +47,32 @@ function ConfirmModal({
       animationType="fade"
       onRequestClose={onCancel}
       statusBarTranslucent
+      accessibilityViewIsModal
+      accessibilityLabel={title}
     >
       {/* Backdrop */}
       <Pressable
         className="flex-1 justify-center items-center px-6"
         style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
         onPress={onCancel}
+        accessibilityRole="button"
+        accessibilityLabel="Close modal"
+        accessibilityHint="Tap to dismiss the confirmation dialog"
       >
         {/* Modal Content */}
         <Pressable
           className="w-full max-w-sm rounded-3xl p-6"
           style={{ backgroundColor: colors.surface }}
           onPress={(e) => e.stopPropagation()}
+          accessibilityRole="alert"
+          accessibilityLabel={`${title}. ${message}`}
         >
           {/* Icon */}
           <View
             className="w-16 h-16 rounded-full items-center justify-center self-center mb-4"
             style={{ backgroundColor: iconColor + '20' }}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
           >
             <Ionicons name={icon} size={32} color={iconColor} />
           </View>
@@ -87,12 +96,16 @@ function ConfirmModal({
               loading={loading}
               disabled={loading}
               style={variant === 'danger' ? { backgroundColor: colors.error } : undefined}
+              accessibilityLabel={confirmText}
+              accessibilityHint={`Confirms the action: ${title}`}
             />
             <ThemedButton
               title={cancelText}
               onPress={onCancel}
               variant="outline"
               disabled={loading}
+              accessibilityLabel={cancelText}
+              accessibilityHint="Closes the dialog without making changes"
             />
           </View>
         </Pressable>

@@ -21,10 +21,10 @@ const OPTIONS: Array<{
   label: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
 }> = [
-  { key: 'light', label: 'Light', icon: 'sunny-outline' },
-  { key: 'dark', label: 'Dark', icon: 'moon-outline' },
-  { key: 'system', label: 'Auto', icon: 'phone-portrait-outline' },
-];
+    { key: 'light', label: 'Light', icon: 'sunny-outline' },
+    { key: 'dark', label: 'Dark', icon: 'moon-outline' },
+    { key: 'system', label: 'Auto', icon: 'phone-portrait-outline' },
+  ];
 
 function ThemeToggle({ variant = 'icon' }: ThemeToggleProps) {
   const { colors, mode, preference, setThemePreference, toggleTheme } = useTheme();
@@ -42,6 +42,9 @@ function ThemeToggle({ variant = 'icon' }: ThemeToggleProps) {
         className="w-10 h-10 rounded-full items-center justify-center"
         style={{ backgroundColor: colors.surfaceSecondary }}
         hitSlop={8}
+        accessibilityRole="button"
+        accessibilityLabel={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}
+        accessibilityHint="Toggles between light and dark theme"
       >
         <Ionicons
           name={mode === 'dark' ? 'sunny-outline' : 'moon-outline'}
@@ -57,6 +60,8 @@ function ThemeToggle({ variant = 'icon' }: ThemeToggleProps) {
     <View
       className="flex-row rounded-xl p-[3px] overflow-hidden"
       style={{ backgroundColor: colors.surfaceSecondary, borderWidth: 1, borderColor: colors.border }}
+      accessibilityRole="radiogroup"
+      accessibilityLabel="Theme selection"
     >
       {OPTIONS.map((opt) => {
         const isActive = preference === opt.key;
@@ -66,6 +71,10 @@ function ThemeToggle({ variant = 'icon' }: ThemeToggleProps) {
             onPress={() => handleSelect(opt.key)}
             className="flex-1 flex-row items-center justify-center py-2 rounded-[10px]"
             style={isActive ? { backgroundColor: colors.primary } : undefined}
+            accessibilityRole="radio"
+            accessibilityLabel={`${opt.label} theme`}
+            accessibilityHint={`Activates ${opt.label} theme mode`}
+            accessibilityState={{ checked: isActive }}
           >
             <Ionicons
               name={opt.icon}

@@ -109,6 +109,7 @@ const CourseDetailScreen = () => {
             height={220}
             placeholderIcon="book-outline"
             iconSize={48}
+            accessibilityLabel={`${courseDetail.title} course thumbnail`}
           />
           {/* Top Buttons */}
           <View className="absolute top-3 left-4 right-4 flex-row justify-between">
@@ -116,6 +117,9 @@ const CourseDetailScreen = () => {
               onPress={handleBack}
               className="w-10 h-10 rounded-full items-center justify-center"
               style={{ backgroundColor: colors.surface + 'E6' }}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              accessibilityHint="Returns to previous screen"
             >
               <Ionicons name="arrow-back" size={22} color={colors.text} />
             </Pressable>
@@ -123,6 +127,10 @@ const CourseDetailScreen = () => {
               onPress={handleBookmark}
               className="w-10 h-10 rounded-full items-center justify-center"
               style={{ backgroundColor: colors.surface + 'E6' }}
+              accessibilityRole="button"
+              accessibilityLabel={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
+              accessibilityHint={isBookmarked ? 'Removes this course from bookmarks' : 'Saves this course to bookmarks'}
+              accessibilityState={{ selected: isBookmarked }}
             >
               <Ionicons
                 name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
@@ -153,7 +161,7 @@ const CourseDetailScreen = () => {
           </View>
 
           {/* Title */}
-          <Text className="text-xl font-bold leading-7 mb-3" style={{ color: colors.text }}>
+          <Text className="text-xl font-bold leading-7 mb-3" style={{ color: colors.text }} accessibilityRole="header">
             {courseDetail.title}
           </Text>
 
@@ -183,6 +191,9 @@ const CourseDetailScreen = () => {
           <View
             className="flex-row items-center p-3.5 rounded-2xl mb-5"
             style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}
+            accessible
+            accessibilityRole="summary"
+            accessibilityLabel={`Instructor: ${courseDetail.instructor.name}, ${courseDetail.instructor.location || 'Instructor'}`}
           >
             <PlaceholderImage
               uri={courseDetail.instructor.avatar}
@@ -191,6 +202,7 @@ const CourseDetailScreen = () => {
               borderRadius={24}
               placeholderIcon="person"
               iconSize={24}
+              accessibilityLabel={`${courseDetail.instructor.name}'s avatar`}
             />
             <View className="ml-3 flex-1">
               <Text className="text-[15px] font-semibold" style={{ color: colors.text }}>
@@ -245,6 +257,7 @@ const CourseDetailScreen = () => {
                     borderRadius={12}
                     placeholderIcon="image-outline"
                     style={{ marginRight: 10 }}
+                    accessibilityLabel={`Course preview image ${index + 1} of ${courseDetail.images.length}`}
                   />
                 ))}
               </ScrollView>
@@ -266,18 +279,31 @@ const CourseDetailScreen = () => {
         {isEnrolled ? (
           <View className="flex-1 flex-row items-center gap-3">
             <View className="flex-1">
-              <ThemedButton title="View Content" onPress={handleViewContent} variant="primary" />
+              <ThemedButton
+                title="View Content"
+                onPress={handleViewContent}
+                variant="primary"
+                accessibilityHint="Opens course content in viewer"
+              />
             </View>
             <View
               className="w-12 h-12 rounded-xl items-center justify-center"
               style={{ backgroundColor: colors.successLight }}
+              accessible
+              accessibilityLabel="Enrolled"
             >
               <Ionicons name="checkmark-circle" size={24} color={colors.success} />
             </View>
           </View>
         ) : (
           <View className="flex-1">
-            <ThemedButton title={`Enroll — $${discountedPrice.toFixed(2)}`} onPress={handleEnroll} variant="primary" />
+            <ThemedButton
+              title={`Enroll — $${discountedPrice.toFixed(2)}`}
+              onPress={handleEnroll}
+              variant="primary"
+              accessibilityLabel={`Enroll in course for $${discountedPrice.toFixed(2)}`}
+              accessibilityHint="Enrolls you in this course"
+            />
           </View>
         )}
       </View>
@@ -298,11 +324,15 @@ function InfoChip({
   colors: ReturnType<typeof import('@/src/context').useTheme>['colors'];
 }) {
   return (
-    <View className="w-1/2 flex-row items-center py-2">
+    <View
+      className="w-1/2 flex-row items-center py-2"
+      accessible
+      accessibilityLabel={`${label}: ${value}`}
+    >
       <Ionicons name={icon} size={16} color={colors.textSecondary} />
       <View className="ml-2">
-        <Text className="text-[10px]" style={{ color: colors.textTertiary }}>{label}</Text>
-        <Text className="text-xs font-medium capitalize" style={{ color: colors.text }}>{value}</Text>
+        <Text className="text-[10px]" style={{ color: colors.textTertiary }} accessible={false}>{label}</Text>
+        <Text className="text-xs font-medium capitalize" style={{ color: colors.text }} accessible={false}>{value}</Text>
       </View>
     </View>
   );

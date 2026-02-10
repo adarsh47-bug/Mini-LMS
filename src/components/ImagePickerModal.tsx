@@ -27,11 +27,16 @@ function ImagePickerModal({ visible, onCamera, onGallery, onCancel }: ImagePicke
       animationType="slide"
       onRequestClose={onCancel}
       statusBarTranslucent
+      accessibilityViewIsModal
+      accessibilityLabel="Image picker options"
     >
       <Pressable
         className="flex-1 justify-end"
         style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}
         onPress={onCancel}
+        accessibilityRole="button"
+        accessibilityLabel="Close image picker"
+        accessibilityHint="Tap to dismiss the picker"
       >
         <Pressable
           className="rounded-t-3xl pb-8 pt-4 px-6"
@@ -69,6 +74,7 @@ function ImagePickerModal({ visible, onCamera, onGallery, onCancel }: ImagePicke
               }}
               accessibilityRole="button"
               accessibilityLabel="Take a photo with camera"
+              accessibilityHint="Opens the camera to take a new photo"
             >
               <View
                 className="w-12 h-12 rounded-full items-center justify-center"
@@ -97,6 +103,7 @@ function ImagePickerModal({ visible, onCamera, onGallery, onCancel }: ImagePicke
                 borderColor: colors.border,
               }}
               accessibilityRole="button"
+              accessibilityHint="Opens your photo library to select an existing photo"
               accessibilityLabel="Choose from photo gallery"
             >
               <View
@@ -123,6 +130,7 @@ function ImagePickerModal({ visible, onCamera, onGallery, onCancel }: ImagePicke
             className="mt-4 py-3.5 rounded-2xl items-center"
             style={{ backgroundColor: colors.surfaceSecondary }}
             accessibilityRole="button"
+            accessibilityHint="Dismisses the image picker without selecting a photo"
             accessibilityLabel="Cancel"
           >
             <Text className="text-base font-semibold" style={{ color: colors.textSecondary }}>

@@ -83,11 +83,14 @@ export const NotificationBanner: React.FC<NotificationBannerProps> = ({ visible,
           shadowRadius: 2,
           elevation: 2,
         }}
+        accessible
+        accessibilityRole="alert"
+        accessibilityLabel={`${variant} notification: ${title}`}
+        accessibilityLiveRegion="polite"
       >
         <Ionicons name={iconName as any} size={18} color={colors.text} />
         <Text
-          accessible
-          accessibilityRole="text"
+          accessible={false}
           style={{ color: colors.text, fontSize: 15, fontWeight: '600', flex: 1, marginRight: 8, flexShrink: 1 }}
           numberOfLines={2}
           ellipsizeMode="tail"
@@ -103,6 +106,7 @@ export const NotificationBanner: React.FC<NotificationBannerProps> = ({ visible,
             accessible
             accessibilityRole="button"
             accessibilityLabel={a.label}
+            accessibilityHint={`Performs ${a.label} action`}
           >
             <Text style={{ color: colors.primary, fontWeight: '600', fontSize: 14 }}>{a.label}</Text>
           </TouchableOpacity>

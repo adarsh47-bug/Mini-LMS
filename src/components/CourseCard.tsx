@@ -42,6 +42,9 @@ function CourseCard({ course, onPress }: CourseCardProps) {
         borderWidth: 1,
         borderColor: colors.border,
       }}
+      accessibilityRole="button"
+      accessibilityLabel={`${course.title}, ${course.category} course, price $${course.price}, by ${course.instructor.name}`}
+      accessibilityHint="Double tap to view course details"
     >
       {/* Thumbnail */}
       <View className="relative">
@@ -56,6 +59,7 @@ function CourseCard({ course, onPress }: CourseCardProps) {
         <View
           className="absolute top-3 left-3 px-2.5 py-1 rounded-lg"
           style={{ backgroundColor: colors.primary + 'E6' }}
+          accessibilityLabel={`Category: ${course.category.replace(/-/g, ' ')}`}
         >
           <Text className="text-xs font-semibold" style={{ color: colors.white }}>
             {course.category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
@@ -67,6 +71,10 @@ function CourseCard({ course, onPress }: CourseCardProps) {
           className="absolute top-3 right-3 w-9 h-9 rounded-full items-center justify-center"
           style={{ backgroundColor: colors.surface + 'E6' }}
           hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
+          accessibilityHint={isBookmarked ? 'Removes this course from your bookmarks' : 'Saves this course to your bookmarks'}
+          accessibilityState={{ selected: isBookmarked }}
         >
           <Ionicons
             name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
@@ -78,6 +86,7 @@ function CourseCard({ course, onPress }: CourseCardProps) {
         <View
           className="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg"
           style={{ backgroundColor: colors.secondary + 'E6' }}
+          accessibilityLabel={`Price: $${course.price}`}
         >
           <Text className="text-xs font-bold" style={{ color: colors.white }}>
             ${course.price}
@@ -92,7 +101,7 @@ function CourseCard({ course, onPress }: CourseCardProps) {
           style={{ color: colors.text }}
           numberOfLines={2}
         >
-          {course.title}
+          {course.title} test
         </Text>
 
         {/* Instructor */}

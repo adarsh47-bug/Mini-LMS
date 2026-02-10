@@ -27,11 +27,16 @@ export function OfflineIndicator() {
         <View
           style={{ backgroundColor: colors.error, height: OFFLINE_INDICATOR_HEIGHT }}
           className="px-4 flex-row items-center justify-center"
+          accessible
+          accessibilityRole="alert"
+          accessibilityLabel="No internet connection"
+          accessibilityLiveRegion="assertive"
         >
           <MaterialIcons name="wifi-off" size={18} color={colors.white} />
           <Text
             style={{ color: colors.white }}
             className="text-sm font-semibold ml-2"
+            accessible={false}
           >
             No internet connection
           </Text>

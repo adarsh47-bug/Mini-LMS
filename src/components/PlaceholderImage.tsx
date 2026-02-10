@@ -29,6 +29,8 @@ interface PlaceholderImageProps {
   iconSize?: number;
   /** Container style override */
   style?: StyleProp<ViewStyle>;
+  /** Accessibility label for the image */
+  accessibilityLabel?: string;
 }
 
 function PlaceholderImage({
@@ -40,6 +42,7 @@ function PlaceholderImage({
   placeholderIcon = 'image-outline',
   iconSize,
   style,
+  accessibilityLabel = 'Image',
 }: PlaceholderImageProps) {
   const { colors } = useTheme();
   const [hasError, setHasError] = useState(false);
@@ -63,6 +66,9 @@ function PlaceholderImage({
           },
           style,
         ]}
+        accessible={true}
+        accessibilityRole="image"
+        accessibilityLabel={`${accessibilityLabel} placeholder`}
       >
         <Ionicons name={placeholderIcon} size={resolvedIconSize} color={colors.textTertiary} />
       </View>
@@ -77,6 +83,9 @@ function PlaceholderImage({
       transition={200}
       cachePolicy="memory-disk"
       onError={handleError}
+      accessible={true}
+      accessibilityRole="image"
+      accessibilityLabel={accessibilityLabel}
     />
   );
 }

@@ -10,9 +10,10 @@ import { useTheme } from '@/src/context';
 import { useBookmarkStore, useCourseStore } from '@/src/stores';
 import type { CourseListItem } from '@/src/types';
 import { Ionicons } from '@expo/vector-icons';
+import { LegendList } from '@legendapp/list';
 import { router } from 'expo-router';
 import React, { useCallback, useMemo } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const BookmarksScreen = () => {
@@ -57,15 +58,15 @@ const BookmarksScreen = () => {
     <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }} edges={['top', 'left', 'right']}>
       {/* Header */}
       <View className="flex-row items-center px-5 pt-2 pb-3">
-        <Text className="text-xl font-bold flex-1" style={{ color: colors.text }}>
+        <Text className="text-xl font-bold flex-1" style={{ color: colors.text }} accessibilityRole="header">
           Bookmarks
         </Text>
-        <Text className="text-sm" style={{ color: colors.textSecondary }}>
+        <Text className="text-sm" style={{ color: colors.textSecondary }} accessibilityLabel={`${bookmarkedCourses.length} saved courses`}>
           {bookmarkedCourses.length} saved
         </Text>
       </View>
 
-      <FlatList
+      <LegendList
         data={bookmarkedCourses}
         renderItem={renderItem}
         keyExtractor={keyExtractor}

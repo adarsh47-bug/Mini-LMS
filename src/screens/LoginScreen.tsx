@@ -67,8 +67,11 @@ const LoginScreen = () => {
             style={{ width: 72, height: 72, borderRadius: 16, marginBottom: 16 }}
             contentFit="contain"
             transition={200}
+            accessible
+            accessibilityRole="image"
+            accessibilityLabel={`${NAME} logo`}
           />
-          <Text className="text-[28px] font-bold mb-1" style={{ color: colors.text }}>
+          <Text className="text-[28px] font-bold mb-1" style={{ color: colors.text }} accessibilityRole="header">
             Welcome Back
           </Text>
           <Text className="text-[15px] text-center" style={{ color: colors.textSecondary }}>
@@ -79,8 +82,15 @@ const LoginScreen = () => {
         {/* Form */}
         <View className="mb-6">
           {authError ? (
-            <View className="p-3 rounded-xl mb-4" style={{ backgroundColor: colors.errorLight }}>
-              <Text className="text-sm font-medium text-center" style={{ color: colors.errorDark }}>
+            <View
+              className="p-3 rounded-xl mb-4"
+              style={{ backgroundColor: colors.errorLight }}
+              accessible
+              accessibilityRole="alert"
+              accessibilityLabel={`Error: ${authError}`}
+              accessibilityLiveRegion="assertive"
+            >
+              <Text className="text-sm font-medium text-center" style={{ color: colors.errorDark }} accessible={false}>
                 {authError}
               </Text>
             </View>
@@ -102,6 +112,8 @@ const LoginScreen = () => {
                 textContentType="username"
                 nextInputRef={passwordRef}
                 editable={!isSubmitting}
+                accessibilityLabel="Username"
+                accessibilityHint="Enter your username to sign in"
               />
             )}
           />
@@ -122,6 +134,8 @@ const LoginScreen = () => {
                 textContentType="password"
                 onSubmitEditing={handleSubmit(onSubmit)}
                 editable={!isSubmitting}
+                accessibilityLabel="Password"
+                accessibilityHint="Enter your password to sign in"
               />
             )}
           />
@@ -132,12 +146,17 @@ const LoginScreen = () => {
             loading={isSubmitting}
             disabled={isSubmitting}
             style={{ marginTop: 8 }}
+            accessibilityLabel="Sign In"
+            accessibilityHint="Sign in to your account with provided credentials"
           />
 
           <Pressable
             onPress={() => router.push('/(auth)/forgot-password')}
             hitSlop={8}
             className="self-end mt-2"
+            accessibilityRole="button"
+            accessibilityLabel="Forgot Password?"
+            accessibilityHint="Opens password recovery screen"
           >
             <Text className="text-sm font-medium" style={{ color: colors.primary }}>
               Forgot Password?
@@ -150,7 +169,13 @@ const LoginScreen = () => {
           <Text className="text-sm" style={{ color: colors.textSecondary }}>
             Don't have an account?{' '}
           </Text>
-          <Pressable onPress={handleGoToRegister} hitSlop={8}>
+          <Pressable
+            onPress={handleGoToRegister}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Sign Up"
+            accessibilityHint="Navigate to registration screen to create a new account"
+          >
             <Text className="text-sm font-semibold" style={{ color: colors.primary }}>
               Sign Up
             </Text>

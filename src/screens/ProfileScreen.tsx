@@ -9,6 +9,7 @@
 import { ConfirmModal, ImagePickerModal, PlaceholderImage, ThemedButton, ThemeToggle } from '@/src/components';
 import { useNotification, useSession, useTheme } from '@/src/context';
 import { resendEmailVerification, updateAvatar } from '@/src/services';
+import { useBookmarkStore } from '@/src/stores';
 import { formatDate } from '@/src/utils';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -38,6 +39,8 @@ const ProfileScreen = () => {
   const { colors } = useTheme();
   const { user, signOut, refreshUser } = useSession();
   const notification = useNotification();
+  const bookmarkCount = useBookmarkStore((s) => s.bookmarkedIds.length);
+  const enrolledCount = useBookmarkStore((s) => s.enrolledIds.length);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [avatarUri, setAvatarUri] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -146,13 +149,21 @@ const ProfileScreen = () => {
       >
         {/* Top Bar */}
         <View className="flex-row justify-between items-center pt-2 mb-6">
-          <Text className="text-xl font-bold" style={{ color: colors.text }}>Profile</Text>
+          <Text className="text-xl font-bold" style={{ color: colors.text }} accessibilityRole="header">
+            Profile
+          </Text>
           <ThemeToggle variant="icon" />
         </View>
 
         {/* Avatar Section */}
         <View className="items-center mb-8">
-          <Pressable onPress={() => setShowImagePicker(true)} disabled={uploadingAvatar}>
+          <Pressable
+            onPress={() => setShowImagePicker(true)}
+            disabled={uploadingAvatar}
+            accessibilityRole="button"
+            accessibilityLabel={uploadingAvatar ? "Uploading profile picture" : "Change profile picture"}
+            accessibilityHint="Opens photo picker to update your profile picture"
+          >
             <PlaceholderImage
               uri={displayAvatar}
               width={96}
@@ -160,6 +171,7 @@ const ProfileScreen = () => {
               borderRadius={48}
               placeholderIcon="person"
               iconSize={40}
+              accessibilityLabel={`${user?.username}'s profile picture`}
             />
             {/* Edit badge */}
             <View
@@ -179,6 +191,50 @@ const ProfileScreen = () => {
           <View className="px-3 py-1 rounded-full mt-1" style={{ backgroundColor: colors.primaryLight + '20' }}>
             <Text className="text-xs font-semibold uppercase" style={{ color: colors.primary }}>
               {user?.role || 'USER'}
+            </Text>
+          </View>
+        </View>
+
+        {/* Statistics */}
+        <View className="flex-row gap-3 mb-6">
+          <View
+            className="flex-1 items-center py-4 rounded-2xl"
+            style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}
+            accessible
+            accessibilityRole="summary"
+            accessibilityLabel={`${enrolledCount} enrolled courses`}
+          >
+            <View
+              className="w-12 h-12 rounded-full items-center justify-center mb-2"
+              style={{ backgroundColor: colors.primary + '20' }}
+            >
+              <Ionicons name="school" size={24} color={colors.primary} />
+            </View>
+            <Text className="text-2xl font-bold" style={{ color: colors.text }}>
+              {enrolledCount}
+            </Text>
+            <Text className="text-xs mt-1" style={{ color: colors.textSecondary }}>
+              Enrolled
+            </Text>
+          </View>
+          <View
+            className="flex-1 items-center py-4 rounded-2xl"
+            style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}
+            accessible
+            accessibilityRole="summary"
+            accessibilityLabel={`${bookmarkCount} bookmarked courses`}
+          >
+            <View
+              className="w-12 h-12 rounded-full items-center justify-center mb-2"
+              style={{ backgroundColor: colors.secondary + '20' }}
+            >
+              <Ionicons name="bookmark" size={24} color={colors.secondary} />
+            </View>
+            <Text className="text-2xl font-bold" style={{ color: colors.text }}>
+              {bookmarkCount}
+            </Text>
+            <Text className="text-xs mt-1" style={{ color: colors.textSecondary }}>
+              Bookmarked
             </Text>
           </View>
         </View>
@@ -212,6 +268,9 @@ const ProfileScreen = () => {
           <View
             className="rounded-2xl p-4 mb-6 flex-row items-center"
             style={{ backgroundColor: colors.primaryLight + '15', borderWidth: 1, borderColor: colors.primary }}
+            accessible
+            accessibilityRole="alert"
+            accessibilityLabel="Email not verified. Verify your email to access all features"
           >
             <Ionicons name="alert-circle-outline" size={24} color={colors.primary} />
             <View className="flex-1 ml-3">
@@ -223,6 +282,9 @@ const ProfileScreen = () => {
               disabled={resendingVerification}
               className="ml-2 px-3 py-1.5 rounded-lg"
               style={{ backgroundColor: colors.primary }}
+              accessibilityRole="button"
+              accessibilityLabel="Resend verification email"
+              accessibilityHint="Sends a new verification email to your inbox"
             >
               {resendingVerification ? (
                 <ActivityIndicator size="small" color={colors.textInverse} />
@@ -233,21 +295,33 @@ const ProfileScreen = () => {
           </View>
         )}
 
-        {/* Theme */}
-        <View className="mb-6">
-          <Text className="text-base font-semibold mb-3" style={{ color: colors.text }}>Appearance</Text>
-          <ThemeToggle variant="segmented" />
-        </View>
+        <View
+          className="rounded-2xl p-4 mb-6"
+          style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}
+        >
+          {/* Theme */}
+          <View className="mb-6">
+            <Text className="text-base font-semibold mb-3" style={{ color: colors.text }}>Appearance</Text>
+            <ThemeToggle variant="segmented" />
+          </View>
 
-        {/* Actions */}
-        <View className="gap-3">
-          <ThemedButton title="Change Password" onPress={handleChangePassword} variant="outline" />
-          <ThemedButton
-            title="Sign Out"
-            onPress={() => setShowSignOutModal(true)}
-            variant="ghost"
-            disabled={loggingOut}
-          />
+          {/* Actions */}
+          <View className="gap-3">
+            <Text className="text-base font-semibold mb-3" style={{ color: colors.text }}>Account Actions</Text>
+            <ThemedButton
+              title="Change Password"
+              onPress={handleChangePassword}
+              variant="outline"
+              accessibilityHint="Navigate to change password screen"
+            />
+            <ThemedButton
+              title="Sign Out"
+              onPress={() => setShowSignOutModal(true)}
+              variant="ghost"
+              disabled={loggingOut}
+              accessibilityHint="Opens confirmation dialog to sign out"
+            />
+          </View>
         </View>
       </ScrollView>
 

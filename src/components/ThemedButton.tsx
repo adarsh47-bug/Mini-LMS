@@ -6,7 +6,7 @@
 
 import { useTheme } from '@/src/context';
 import React, { useMemo } from 'react';
-import { ActivityIndicator, Pressable, Text, type ViewStyle, type TextStyle } from 'react-native';
+import { ActivityIndicator, Pressable, Text, type TextStyle, type ViewStyle } from 'react-native';
 
 interface ThemedButtonProps {
   title: string;
@@ -17,6 +17,8 @@ interface ThemedButtonProps {
   disabled?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 
 const SIZE_CLASSES = {
@@ -40,6 +42,8 @@ function ThemedButton({
   disabled = false,
   style,
   textStyle,
+  accessibilityLabel,
+  accessibilityHint,
 }: ThemedButtonProps) {
   const { colors } = useTheme();
 
@@ -73,6 +77,10 @@ function ThemedButton({
     <Pressable
       onPress={onPress}
       disabled={isDisabled}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel || title}
+      accessibilityHint={accessibilityHint}
+      accessibilityState={{ disabled: isDisabled, busy: loading }}
       className={`flex-row items-center justify-center rounded-xl ${SIZE_CLASSES[size]} ${isDisabled ? 'opacity-60' : 'active:opacity-80 active:scale-[0.98]'}`}
       style={[bg, style]}
     >

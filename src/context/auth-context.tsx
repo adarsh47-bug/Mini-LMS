@@ -19,6 +19,7 @@ import {
   type RegisterPayload,
   type User,
 } from '@/src/services';
+import { useBookmarkStore, useCourseStore } from '@/src/stores';
 import React, { createContext, useCallback, useContext, useEffect, useState, type PropsWithChildren } from 'react';
 import { useNotification } from './notification-context';
 
@@ -78,6 +79,10 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const notification = useNotification();
+
+  // Get store reset methods
+  const resetBookmarkStore = useBookmarkStore((s) => s.reset);
+  const resetCourseStore = useCourseStore((s) => s.reset);
 
   // Load user profile when session exists
   useEffect(() => {
@@ -157,12 +162,20 @@ export function SessionProvider({ children }: PropsWithChildren) {
     } catch {
       console.warn('Logout API call failed, clearing local session');
     } finally {
+      // Clear all tokens and auth data
       await clearTokens();
+
+      // Reset user-specific stores
+      resetBookmarkStore();
+      resetCourseStore();
+
+      // Clear auth state
       setUser(null);
       setSession(null);
+
       notification.info('You have been signed out.');
     }
-  }, [setSession, notification]);
+  }, [setSession, notification, resetBookmarkStore, resetCourseStore]);
 
   const clearError = useCallback(() => setError(null), []);
 

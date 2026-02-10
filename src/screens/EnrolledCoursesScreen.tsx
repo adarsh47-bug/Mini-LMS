@@ -11,9 +11,10 @@ import { useTheme } from '@/src/context';
 import { useBookmarkStore, useCourseStore } from '@/src/stores';
 import type { CourseListItem } from '@/src/types';
 import { Ionicons } from '@expo/vector-icons';
+import { LegendList } from '@legendapp/list';
 import { router } from 'expo-router';
 import React, { useCallback, useMemo } from 'react';
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const EnrolledCoursesScreen = () => {
@@ -60,6 +61,9 @@ const EnrolledCoursesScreen = () => {
           onPress={() => router.back()}
           className="mt-5 px-6 py-2.5 rounded-xl"
           style={{ backgroundColor: colors.primary }}
+          accessibilityRole="button"
+          accessibilityLabel="Browse Courses"
+          accessibilityHint="Navigate to course catalog"
         >
           <Text className="text-sm font-semibold" style={{ color: colors.textInverse }}>
             Browse Courses
@@ -79,23 +83,28 @@ const EnrolledCoursesScreen = () => {
           className="w-10 h-10 rounded-full items-center justify-center mr-3"
           style={{ backgroundColor: colors.surfaceSecondary }}
           hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          accessibilityHint="Returns to previous screen"
         >
           <Ionicons name="arrow-back" size={22} color={colors.text} />
         </Pressable>
-        <Text className="text-xl font-bold flex-1" style={{ color: colors.text }}>
+        <Text className="text-xl font-bold flex-1" style={{ color: colors.text }} accessibilityRole="header">
           My Courses
         </Text>
         <View
           className="px-2.5 py-1 rounded-lg"
           style={{ backgroundColor: colors.primaryLight + '20' }}
+          accessible
+          accessibilityLabel={`${enrolledCourses.length} enrolled courses`}
         >
-          <Text className="text-xs font-semibold" style={{ color: colors.primary }}>
+          <Text className="text-xs font-semibold" style={{ color: colors.primary }} accessible={false}>
             {enrolledCourses.length} enrolled
           </Text>
         </View>
       </View>
 
-      <FlatList
+      <LegendList
         data={enrolledCourses}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
