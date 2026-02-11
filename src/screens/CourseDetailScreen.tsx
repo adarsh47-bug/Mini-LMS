@@ -62,7 +62,7 @@ const CourseDetailScreen = () => {
   const handleViewContent = useCallback(() => {
     if (courseDetail) {
       router.push({
-        pathname: '/(app)/webview' as any,
+        pathname: '/(app)/webview',
         params: {
           courseId: String(courseDetail.id),
           courseTitle: courseDetail.title,

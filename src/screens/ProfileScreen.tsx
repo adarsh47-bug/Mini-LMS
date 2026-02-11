@@ -12,7 +12,7 @@ import { useNotification, useSession, useTheme } from '@/src/context';
 import { useScrollToTop } from '@/src/hooks';
 import { resendEmailVerification, updateAvatar } from '@/src/services';
 import { useBookmarkStore } from '@/src/stores';
-import { formatDate, formatDateTime, getAsyncStorageItem, setAsyncStorageItem } from '@/src/utils';
+import { formatDate, formatDateTime, getAsyncStorageItem, logger, setAsyncStorageItem } from '@/src/utils';
 import { Ionicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
 import * as ImagePicker from 'expo-image-picker';
@@ -68,7 +68,7 @@ const ProfileScreen = () => {
           setAvatarUri(cachedAvatar);
         }
       } catch (error) {
-        console.error('Failed to load optimistic avatar:', error);
+        logger.error('Failed to load optimistic avatar', error);
       }
     };
     loadOptimisticAvatar();
@@ -95,7 +95,7 @@ const ProfileScreen = () => {
           }
         }
       } catch (error) {
-        console.error('Error checking for updates:', error);
+        logger.error('Error checking for updates', error);
       }
     };
 
@@ -228,7 +228,7 @@ const ProfileScreen = () => {
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Failed to check for updates';
       notification.error(msg);
-      console.error('Update check error:', error);
+      logger.error('Update check error', error);
     } finally {
       setCheckingUpdate(false);
     }

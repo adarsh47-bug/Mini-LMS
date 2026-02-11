@@ -1,3 +1,4 @@
+import { env } from '@/src/config/env';
 import Constants from 'expo-constants';
 
 // ============================================================================
@@ -5,7 +6,8 @@ import Constants from 'expo-constants';
 // ============================================================================
 
 export const API_CONFIG = {
-  timeout: 60000,
+  baseUrl: env.apiBaseUrl,
+  timeout: env.apiTimeout,
   retryAttempts: 3,
   retryDelay: 1000,
 } as const;

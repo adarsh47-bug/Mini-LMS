@@ -6,5 +6,6 @@
 
 export * from './app.constants';
 export * from './colors.constants';
+export * from './performance.constants';
 export * from './tabs.constants';
 

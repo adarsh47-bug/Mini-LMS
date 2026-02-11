@@ -5,11 +5,9 @@
  * and random users API (used as instructors).
  */
 
-// ============================================================================
-// PRODUCT / COURSE TYPES
-// ============================================================================
+// Course and product types
 
-/** Basic product returned from list endpoint */
+/** Basic product from list endpoint */
 export interface ProductListItem {
   id: number;
   title: string;
@@ -46,9 +44,7 @@ export interface PaginatedProducts {
   data: ProductListItem[];
 }
 
-// ============================================================================
-// RANDOM USER / INSTRUCTOR TYPES
-// ============================================================================
+// Instructor types
 
 export interface RandomUserName {
   title: string;

@@ -6,6 +6,7 @@
  * Industry standard error handling for production React Native apps.
  */
 
+import { logger } from '@/src/utils';
 import { Ionicons } from '@expo/vector-icons';
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
@@ -39,7 +40,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error details for debugging
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    logger.error('ErrorBoundary caught an error', error, { errorInfo });
 
     this.setState({
       error,
@@ -184,7 +185,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
               {__DEV__ && (
                 <Pressable
-                  onPress={() => console.log('Full Error:', this.state)}
+                  onPress={() => logger.debug('Full Error State', this.state)}
                   style={{
                     backgroundColor: '#1E293B',
                     paddingVertical: 14,

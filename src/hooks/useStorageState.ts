@@ -6,7 +6,7 @@
  * Based on Expo Router authentication pattern.
  */
 
-import { setStorageItemAsync } from '@/src/utils';
+import { logger, setStorageItemAsync } from '@/src/utils';
 import * as SecureStore from 'expo-secure-store';
 import { useCallback, useEffect, useReducer } from 'react';
 import { Platform } from 'react-native';
@@ -34,7 +34,7 @@ export function useStorageState(key: string): UseStateHook<string> {
           setState(localStorage.getItem(key));
         }
       } catch (e) {
-        console.error('Local storage is unavailable:', e);
+        logger.error('Local storage is unavailable', e);
       }
     } else {
       SecureStore.getItemAsync(key).then((value: string | null) => {

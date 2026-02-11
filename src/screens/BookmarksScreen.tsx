@@ -29,7 +29,7 @@ const BookmarksScreen = () => {
   );
 
   const handleCoursePress = useCallback((courseId: number) => {
-    router.push(`/(app)/course/${courseId}` as any);
+    router.push(`/(app)/course/${courseId}`);
   }, []);
 
   const renderItem = useCallback(

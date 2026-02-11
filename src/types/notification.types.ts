@@ -20,8 +20,8 @@ export interface NotificationItem {
   duration?: number; // ms
   position?: NotificationPosition;
   actions?: NotificationAction[];
-  // any extra metadata to pass through
-  meta?: Record<string, any>;
+  /** Extra metadata to pass through */
+  meta?: Record<string, unknown>;
 }
 
 export type NotificationPayload = Omit<Partial<NotificationItem>, 'id'> & { title: string };

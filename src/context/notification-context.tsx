@@ -7,7 +7,7 @@
  */
 
 import { NotificationItem, NotificationPayload, NotificationVariant } from '@/src/types';
-import React, { createContext, PropsWithChildren, useCallback, useContext, useRef, useState } from 'react';
+import React, { createContext, PropsWithChildren, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 // ============================================================================
 // TYPES
@@ -132,19 +132,22 @@ export function NotificationProvider({ children }: PropsWithChildren) {
     [showQuick],
   );
 
+  const value = useMemo(
+    () => ({
+      notifications,
+      showNotification,
+      dismiss,
+      dismissAll,
+      success,
+      error,
+      warning,
+      info,
+    }),
+    [notifications, showNotification, dismiss, dismissAll, success, error, warning, info]
+  );
+
   return (
-    <NotificationContext.Provider
-      value={{
-        notifications,
-        showNotification,
-        dismiss,
-        dismissAll,
-        success,
-        error,
-        warning,
-        info,
-      }}
-    >
+    <NotificationContext.Provider value={value}>
       {children}
     </NotificationContext.Provider>
   );

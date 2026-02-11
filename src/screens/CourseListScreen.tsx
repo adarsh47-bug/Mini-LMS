@@ -67,15 +67,15 @@ const CourseListScreen = () => {
   const isSearching = searchQuery.trim().length > 0;
 
   const handleCoursePress = useCallback((courseId: number) => {
-    router.push(`/(app)/course/${courseId}` as any);
+    router.push(`/(app)/course/${courseId}`);
   }, []);
 
   const handleEnrolled = useCallback(() => {
-    router.push('/(app)/enrolled' as any);
+    router.push('/(app)/enrolled');
   }, []);
 
   const handleBookmarks = useCallback(() => {
-    router.push('/(app)/(tabs)/bookmarks' as any);
+    router.push('/(app)/(tabs)/bookmarks');
   }, []);
 
   const renderCourseItem = useCallback(

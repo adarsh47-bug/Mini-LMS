@@ -16,11 +16,11 @@ interface ThemeToggleProps {
   variant?: ThemeToggleVariant;
 }
 
-const OPTIONS: Array<{
+const OPTIONS: {
   key: 'light' | 'dark' | 'system';
   label: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
-}> = [
+}[] = [
     { key: 'light', label: 'Light', icon: 'sunny-outline' },
     { key: 'dark', label: 'Dark', icon: 'moon-outline' },
     { key: 'system', label: 'Auto', icon: 'phone-portrait-outline' },

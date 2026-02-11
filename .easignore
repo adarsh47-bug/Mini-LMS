@@ -42,20 +42,22 @@ yarn-error.*
 
 app-example
 
-# testing
+# testing (not needed in builds)
 coverage/
 .jest/
-*.lcov
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# documentation (not needed in builds)
+*.md
+!README.md
 
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
-
-# OS
-Thumbs.db
 
 # generated native folders
 /ios

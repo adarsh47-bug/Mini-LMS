@@ -9,6 +9,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
+import { logger } from './logger.utils';
 
 /**
  * Store a value securely (native) or in localStorage (web)
@@ -77,7 +78,7 @@ export async function setAsyncStorageItem(key: string, value: string | null): Pr
       await AsyncStorage.setItem(key, value);
     }
   } catch (error) {
-    console.error('Failed to set AsyncStorage item:', error);
+    logger.error('Failed to set AsyncStorage item', error, { key });
   }
 }
 
@@ -90,7 +91,7 @@ export async function getAsyncStorageItem(key: string): Promise<string | null> {
   try {
     return await AsyncStorage.getItem(key);
   } catch (error) {
-    console.error('Failed to get AsyncStorage item:', error);
+    logger.error('Failed to get AsyncStorage item', error, { key });
     return null;
   }
 }

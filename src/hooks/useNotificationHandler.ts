@@ -18,11 +18,11 @@ function redirect(notification: Notifications.Notification) {
 
   switch (data?.type) {
     case 'bookmark_milestone':
-      router.push('/(app)/(tabs)/bookmarks' as any);
+      router.push('/(app)/(tabs)/bookmarks');
       break;
 
     case 'inactivity_reminder':
-      router.push('/(app)/(tabs)/courses' as any);
+      router.push('/(app)/(tabs)/courses');
       break;
 
     default:

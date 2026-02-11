@@ -1,4 +1,5 @@
 import { getThemeColors, STORAGE_KEYS, type ColorTheme, type ThemeMode } from '@/src/constants';
+import { logger } from '@/src/utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as NavigationBar from 'expo-navigation-bar';
 import { StatusBar } from 'expo-status-bar';
@@ -30,9 +31,7 @@ interface ThemeContextType {
   isSystemTheme: boolean;
 }
 
-// ============================================================================
-// CONTEXT
-// ============================================================================
+// Context
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
@@ -64,7 +63,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     try {
       await AsyncStorage.setItem(STORAGE_KEYS.themePreference, pref);
     } catch (error) {
-      console.error('Failed to save theme preference:', error);
+      logger.error('Failed to save theme preference', error);
       // Non-critical error - app continues to function
     }
   }, []);
@@ -87,7 +86,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           setMode(getSystemTheme());
         }
       } catch (error) {
-        console.error('Failed to load theme preference:', error);
+        logger.error('Failed to load theme preference', error);
         setMode(getSystemTheme());
       } finally {
         setIsLoading(false);

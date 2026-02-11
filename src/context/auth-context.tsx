@@ -18,8 +18,8 @@ import {
 } from '@/src/services';
 import { useBookmarkStore, useCourseStore } from '@/src/stores';
 import type { LoginPayload, RegisterPayload, User } from '@/src/types';
-import { extractErrorMessage, setStorageItemAsync } from '@/src/utils';
-import React, { createContext, useCallback, useContext, useEffect, useState, type PropsWithChildren } from 'react';
+import { extractErrorMessage, logger, setStorageItemAsync } from '@/src/utils';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react';
 import { useNotification } from './notification-context';
 
 // ============================================================================
@@ -96,8 +96,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
       if (response.success && response.data) {
         setUser(response.data);
       }
-    } catch {
-      console.warn('Failed to load user profile');
+    } catch (error) {
+      logger.warn('Failed to load user profile', { error });
     }
   }, []);
 
@@ -107,8 +107,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
       if (response.success && response.data) {
         setUser(response.data);
       }
-    } catch {
-      console.warn('Failed to refresh user profile');
+    } catch (error) {
+      logger.warn('Failed to refresh user profile', { error });
     }
   }, []);
 
@@ -158,8 +158,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const signOut = useCallback(async () => {
     try {
       await logoutUser();
-    } catch {
-      console.warn('Logout API call failed, clearing local session');
+    } catch (error) {
+      logger.warn('Logout API call failed, clearing local session', { error });
     } finally {
       // Clear all tokens and auth data
       await clearTokens();
@@ -178,20 +178,23 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
   const clearError = useCallback(() => setError(null), []);
 
+  const value = useMemo(
+    () => ({
+      signIn,
+      signUp,
+      signOut,
+      refreshUser,
+      session,
+      isLoading,
+      user,
+      error,
+      clearError,
+    }),
+    [signIn, signUp, signOut, refreshUser, session, isLoading, user, error, clearError]
+  );
+
   return (
-    <AuthContext.Provider
-      value={{
-        signIn,
-        signUp,
-        signOut,
-        refreshUser,
-        session,
-        isLoading,
-        user,
-        error,
-        clearError,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

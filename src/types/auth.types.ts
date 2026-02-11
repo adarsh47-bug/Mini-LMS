@@ -5,9 +5,7 @@
  */
 import { z } from 'zod';
 
-// ============================================================================
-// VALIDATION SCHEMAS
-// ============================================================================
+// Validation schemas
 
 export const loginSchema = z.object({
   username: z.string()
@@ -51,18 +49,14 @@ export const forgotPasswordSchema = z.object({
     .transform(val => val.toLowerCase()),
 });
 
-// ============================================================================
-// INFERRED TYPES
-// ============================================================================
+// Inferred types
 
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 
-// ============================================================================
-// API TYPES
-// ============================================================================
+// API types
 
 export interface User {
   _id: string;

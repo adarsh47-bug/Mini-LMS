@@ -5,6 +5,7 @@
  */
 
 import { useNetworkStore } from '@/src/stores';
+import { logger } from '@/src/utils';
 import * as Network from 'expo-network';
 import { useEffect } from 'react';
 
@@ -19,7 +20,7 @@ export function useNetworkMonitor() {
         const networkState = await Network.getNetworkStateAsync();
         setIsConnected(networkState.isConnected ?? true);
       } catch (error) {
-        console.warn('Failed to check network status:', error);
+        logger.warn('Failed to check network status', { error });
         // Assume connected on error to avoid false negatives
         setIsConnected(true);
       }

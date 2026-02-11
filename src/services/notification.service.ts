@@ -1,20 +1,16 @@
 /**
- * Notification Service
- *
- * Handles local push notifications using expo-notifications.
- * Manages permission requests, bookmark milestones, and inactivity reminders.
+ * Notification service for push notifications using expo-notifications
  */
 
+import { logger } from '@/src/utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
-// ============================================================================
-// CONFIGURATION
-// ============================================================================
+// Configuration
 
-/** Configure how notifications appear when app is in foreground */
+/** Configure notification display in foreground */
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldPlaySound: true,
@@ -24,24 +20,20 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// ============================================================================
-// STORAGE KEYS
-// ============================================================================
+// Storage keys
 
 const NOTIFICATION_KEYS = {
   lastOpenTime: '@app_last_open_time',
   bookmarkMilestoneShown: '@bookmark_milestone_shown',
 } as const;
 
-// ============================================================================
-// PERMISSION HANDLING
-// ============================================================================
+// Permissions
 
 /** Request notification permissions. Returns true if granted. */
 export async function requestNotificationPermissions(): Promise<boolean> {
   // Physical device check — notifications don't work on simulators
   if (!Device.isDevice) {
-    console.warn('Push notifications require a physical device');
+    logger.warn('Push notifications require a physical device');
     return false;
   }
 
@@ -86,7 +78,7 @@ export async function sendLocalNotification(
     });
     return id;
   } catch (error) {
-    console.error('Failed to send notification:', error);
+    logger.error('Failed to send notification', error, { title, body });
     return undefined;
   }
 }
@@ -110,7 +102,7 @@ export async function checkBookmarkMilestone(bookmarkCount: number): Promise<voi
 
     await AsyncStorage.setItem(NOTIFICATION_KEYS.bookmarkMilestoneShown, 'true');
   } catch (error) {
-    console.error('Failed to check bookmark milestone:', error);
+    logger.error('Failed to check bookmark milestone', error, { bookmarkCount });
   }
 }
 
@@ -160,7 +152,7 @@ export async function scheduleInactivityReminder(): Promise<void> {
       },
     });
   } catch (error) {
-    console.error('Failed to schedule inactivity reminder:', error);
+    logger.error('Failed to schedule inactivity reminder', error);
   }
 }
 
