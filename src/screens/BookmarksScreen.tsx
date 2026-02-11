@@ -7,6 +7,7 @@
 
 import { CourseCard } from '@/src/components';
 import { useTheme } from '@/src/context';
+import { useScrollToTop } from '@/src/hooks';
 import { useBookmarkStore, useCourseStore } from '@/src/stores';
 import type { CourseListItem } from '@/src/types';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,6 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const BookmarksScreen = () => {
   const { colors } = useTheme();
+  const scrollRef = useScrollToTop();
   const courses = useCourseStore((s) => s.courses);
   const bookmarkedIds = useBookmarkStore((s) => s.bookmarkedIds);
 
@@ -67,6 +69,7 @@ const BookmarksScreen = () => {
       </View>
 
       <LegendList
+        ref={scrollRef}
         data={bookmarkedCourses}
         renderItem={renderItem}
         keyExtractor={keyExtractor}

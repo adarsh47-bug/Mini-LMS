@@ -2,7 +2,7 @@ import { useTheme } from '@/src/context';
 import { NotificationItem } from '@/src/types';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 interface NotificationBannerProps extends Partial<NotificationItem> {
@@ -98,18 +98,17 @@ export const NotificationBanner: React.FC<NotificationBannerProps> = ({ visible,
           {title}
         </Text>
         {actions?.length > 0 && actions.map((a, i) => (
-          <TouchableOpacity
+          <Pressable
             key={i}
             onPress={a.onPress ?? onPress}
-            activeOpacity={0.6}
-            style={{ marginLeft: 6, paddingHorizontal: 10, flexShrink: 0 }}
+            style={({ pressed }) => [{ marginLeft: 6, paddingHorizontal: 10, flexShrink: 0, opacity: pressed ? 0.6 : 1 }]}
             accessible
             accessibilityRole="button"
             accessibilityLabel={a.label}
             accessibilityHint={`Performs ${a.label} action`}
           >
             <Text style={{ color: colors.primary, fontWeight: '600', fontSize: 14 }}>{a.label}</Text>
-          </TouchableOpacity>
+          </Pressable>
         ))}
       </View>
     </Animated.View>

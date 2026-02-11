@@ -28,14 +28,9 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.lms.app",
       "permissions": [
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE",
         "ACCESS_NETWORK_STATE",
         "RECEIVE_BOOT_COMPLETED",
-        "VIBRATE",
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "VIBRATE"
       ],
       "runtimeVersion": {
         "policy": "appVersion"
@@ -50,9 +45,11 @@
       "expo-router",
       "expo-secure-store",
       [
-        "expo-camera",
+        "expo-notifications",
         {
-          "cameraPermission": "Allow LMS to access your camera to update your profile picture."
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#3B82F6",
+          "defaultChannel": "default"
         }
       ],
       [
@@ -65,6 +62,12 @@
           "dark": {
             "backgroundColor": "#0F172A"
           }
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
     ],

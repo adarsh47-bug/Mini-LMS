@@ -8,9 +8,6 @@
 import type { ApiResponse, LoginPayload, LoginResponse, RegisterPayload, User } from '@/src/types';
 import { apiClient } from './api';
 
-// Re-export types for backward compatibility
-export type { LoginPayload, LoginResponse, RegisterPayload, User };
-
 // ============================================================================
 // API CALLS
 // ============================================================================
@@ -39,14 +36,6 @@ export async function logoutUser(): Promise<ApiResponse> {
   return data;
 }
 
-/** Refresh access token */
-export async function refreshToken(token: string): Promise<ApiResponse<{ accessToken: string; refreshToken: string }>> {
-  const { data } = await apiClient.post<ApiResponse<{ accessToken: string; refreshToken: string }>>('/users/refresh-token', {
-    refreshToken: token,
-  });
-  return data;
-}
-
 /** Resend email verification */
 export async function resendEmailVerification(email: string): Promise<ApiResponse> {
   const { data } = await apiClient.post<ApiResponse>('/users/resend-email-verification', { email });
@@ -65,14 +54,6 @@ export async function changePassword(currentPassword: string, newPassword: strin
 /** Forgot password — sends reset email */
 export async function forgotPassword(email: string): Promise<ApiResponse> {
   const { data } = await apiClient.post<ApiResponse>('/users/forgot-password', { email });
-  return data;
-}
-
-/** Reset password with token */
-export async function resetPassword(resetToken: string, newPassword: string): Promise<ApiResponse> {
-  const { data } = await apiClient.post<ApiResponse>(`/users/reset-password/${resetToken}`, {
-    newPassword,
-  });
   return data;
 }
 

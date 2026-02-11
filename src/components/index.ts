@@ -4,7 +4,7 @@
  * Reusable themed components used across screens.
  */
 
-export * from './App_notify';
+export * from './AppNotify';
 export { default as ConfirmModal } from './ConfirmModal';
 export { default as CourseCard } from './CourseCard';
 export { default as ErrorBoundary } from './ErrorBoundary';

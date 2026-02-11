@@ -7,7 +7,7 @@
  */
 
 import { STORAGE_KEYS } from '@/src/constants';
-import { setStorageItemAsync, useStorageState } from '@/src/hooks';
+import { useStorageState } from '@/src/hooks';
 import {
   clearTokens,
   getCurrentUser,
@@ -15,11 +15,10 @@ import {
   logoutUser,
   registerUser,
   setAccessToken, setRefreshToken,
-  type LoginPayload,
-  type RegisterPayload,
-  type User,
 } from '@/src/services';
 import { useBookmarkStore, useCourseStore } from '@/src/stores';
+import type { LoginPayload, RegisterPayload, User } from '@/src/types';
+import { extractErrorMessage, setStorageItemAsync } from '@/src/utils';
 import React, { createContext, useCallback, useContext, useEffect, useState, type PropsWithChildren } from 'react';
 import { useNotification } from './notification-context';
 
@@ -196,19 +195,4 @@ export function SessionProvider({ children }: PropsWithChildren) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-// ============================================================================
-// HELPERS
-// ============================================================================
-
-function extractErrorMessage(err: unknown, fallback: string): string {
-  if (err && typeof err === 'object' && 'response' in err) {
-    const axiosErr = err as { response?: { data?: { message?: string } } };
-    return axiosErr.response?.data?.message || fallback;
-  }
-  if (err instanceof Error) {
-    return err.message;
-  }
-  return fallback;
 }

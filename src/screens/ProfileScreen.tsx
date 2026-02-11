@@ -7,10 +7,12 @@
  */
 
 import { ConfirmModal, ImagePickerModal, PlaceholderImage, ThemedButton, ThemeToggle } from '@/src/components';
+import { STORAGE_KEYS } from '@/src/constants';
 import { useNotification, useSession, useTheme } from '@/src/context';
+import { useScrollToTop } from '@/src/hooks';
 import { resendEmailVerification, updateAvatar } from '@/src/services';
 import { useBookmarkStore } from '@/src/stores';
-import { formatDate, formatDateTime } from '@/src/utils';
+import { formatDate, formatDateTime, getAsyncStorageItem, setAsyncStorageItem } from '@/src/utils';
 import { Ionicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
 import * as ImagePicker from 'expo-image-picker';
@@ -41,6 +43,7 @@ const ProfileScreen = () => {
   const { colors } = useTheme();
   const { user, signOut, refreshUser } = useSession();
   const notification = useNotification();
+  const scrollRef = useScrollToTop();
   const bookmarkCount = useBookmarkStore((s) => s.bookmarkedIds.length);
   const enrolledCount = useBookmarkStore((s) => s.enrolledIds.length);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -55,6 +58,21 @@ const ProfileScreen = () => {
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const displayAvatar = avatarUri || user?.avatar?.url;
+
+  // Load optimistic avatar from AsyncStorage on mount
+  useEffect(() => {
+    const loadOptimisticAvatar = async () => {
+      try {
+        const cachedAvatar = await getAsyncStorageItem(STORAGE_KEYS.optimisticAvatar);
+        if (cachedAvatar && cachedAvatar !== user?.avatar?.url) {
+          setAvatarUri(cachedAvatar);
+        }
+      } catch (error) {
+        console.error('Failed to load optimistic avatar:', error);
+      }
+    };
+    loadOptimisticAvatar();
+  }, [user?.avatar?.url]);
 
   // Auto-check for updates on mount
   useEffect(() => {
@@ -97,20 +115,27 @@ const ProfileScreen = () => {
     if (result.canceled || !result.assets[0]) return;
 
     const imageUri = result.assets[0].uri;
+
+    // Optimistically update UI immediately and cache in AsyncStorage
+    setAvatarUri(imageUri);
+    await setAsyncStorageItem(STORAGE_KEYS.optimisticAvatar, imageUri);
+
     setUploadingAvatar(true);
     try {
       await updateAvatar(imageUri);
-      setAvatarUri(imageUri);
       // Refetch user to sync avatar across the app
       await refreshUser();
       notification.success('Profile picture updated successfully.');
     } catch (err: unknown) {
+      // Revert on error
+      setAvatarUri(user?.avatar?.url || null);
+      await setAsyncStorageItem(STORAGE_KEYS.optimisticAvatar, user?.avatar?.url || null);
       const msg = err instanceof Error ? err.message : 'Failed to update avatar.';
       notification.error(msg);
     } finally {
       setUploadingAvatar(false);
     }
-  }, [refreshUser, notification]);
+  }, [refreshUser, notification, user?.avatar?.url]);
 
   const handlePickFromGallery = useCallback(async () => {
     setShowImagePicker(false);
@@ -212,6 +237,7 @@ const ProfileScreen = () => {
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }} edges={['top', 'left', 'right']}>
       <ScrollView
+        ref={scrollRef}
         contentContainerClassName="px-6 pb-8"
         showsVerticalScrollIndicator={false}
         refreshControl={

@@ -5,6 +5,7 @@
  * Tracks bookmarked course IDs and enrolled course IDs.
  */
 
+import { checkBookmarkMilestone, resetBookmarkMilestone } from '@/src/services/notification.service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
@@ -17,16 +18,8 @@ interface BookmarkState {
 
   /** Toggle bookmark for a course */
   toggleBookmark: (courseId: number) => void;
-  /** Check if a course is bookmarked */
-  isBookmarked: (courseId: number) => boolean;
   /** Enroll in a course */
   enrollCourse: (courseId: number) => void;
-  /** Check if enrolled in a course */
-  isEnrolled: (courseId: number) => boolean;
-  /** Get total bookmark count */
-  bookmarkCount: () => number;
-  /** Get total enrolled count */
-  enrolledCount: () => number;
   /** Reset all bookmark data (for logout) */
   reset: () => void;
 }
@@ -41,15 +34,15 @@ export const useBookmarkStore = create<BookmarkState>()(
         toggleBookmark: (courseId: number) => {
           const { bookmarkedIds } = get();
           const isCurrentlyBookmarked = bookmarkedIds.includes(courseId);
-          set({
-            bookmarkedIds: isCurrentlyBookmarked
-              ? bookmarkedIds.filter((id) => id !== courseId)
-              : [...bookmarkedIds, courseId],
-          });
-        },
+          const newBookmarks = isCurrentlyBookmarked
+            ? bookmarkedIds.filter((id) => id !== courseId)
+            : [...bookmarkedIds, courseId];
+          set({ bookmarkedIds: newBookmarks });
 
-        isBookmarked: (courseId: number) => {
-          return get().bookmarkedIds.includes(courseId);
+          // Check for 5+ bookmark milestone notification
+          if (!isCurrentlyBookmarked) {
+            checkBookmarkMilestone(newBookmarks.length);
+          }
         },
 
         enrollCourse: (courseId: number) => {
@@ -59,18 +52,13 @@ export const useBookmarkStore = create<BookmarkState>()(
           }
         },
 
-        isEnrolled: (courseId: number) => {
-          return get().enrolledIds.includes(courseId);
-        },
-
-        bookmarkCount: () => get().bookmarkedIds.length,
-        enrolledCount: () => get().enrolledIds.length,
-
         reset: () => {
           set({
             bookmarkedIds: [],
             enrolledIds: [],
           });
+          // Reset milestone so it can trigger again for new users
+          resetBookmarkMilestone();
         },
       }),
       {

@@ -1,3 +1,5 @@
 export { useNetworkMonitor } from './useNetworkMonitor';
-export { setStorageItemAsync, useStorageState } from './useStorageState';
+export { useNotificationHandler } from './useNotificationHandler';
+export { useScrollToTop } from './useScrollToTop';
+export { useStorageState } from './useStorageState';
 

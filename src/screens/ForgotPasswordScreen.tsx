@@ -9,6 +9,7 @@ import { ThemedButton, ThemedInput } from '@/src/components';
 import { useTheme } from '@/src/context';
 import { forgotPassword } from '@/src/services';
 import { forgotPasswordSchema, type ForgotPasswordInput } from '@/src/types';
+import { extractErrorMessage } from '@/src/utils';
 import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
@@ -45,12 +46,7 @@ const ForgotPasswordScreen = () => {
       await forgotPassword(data.email);
       setSent(true);
     } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'response' in err) {
-        const axiosErr = err as { response?: { data?: { message?: string } } };
-        setError(axiosErr.response?.data?.message || 'Failed to send reset email.');
-      } else {
-        setError('Failed to send reset email. Please try again.');
-      }
+      setError(extractErrorMessage(err, 'Failed to send reset email. Please try again.'));
     }
   }, []);
 

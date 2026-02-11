@@ -114,4 +114,4 @@ const ThemedInput = forwardRef<TextInput, ThemedInputProps>(function ThemedInput
   );
 });
 
-export default ThemedInput;
+export default React.memo(ThemedInput);

@@ -38,7 +38,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error to console (in production, this would go to error reporting service like Sentry)
+    // Log error details for debugging
     console.error('ErrorBoundary caught an error:', error, errorInfo);
 
     this.setState({
@@ -46,8 +46,8 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       errorInfo,
     });
 
-    // TODO: Log to error reporting service (e.g., Sentry)
-    // logErrorToService(error, errorInfo);
+    // In production, integrate with error reporting service (e.g., Sentry, LogRocket)
+    // Example: Sentry.captureException(error, { contexts: { react: errorInfo } });
   }
 
   resetError = () => {

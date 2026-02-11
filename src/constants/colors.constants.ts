@@ -13,7 +13,7 @@
 /**
  * Brand Colors - Core identity colors
  */
-export const BrandColors = {
+const BrandColors = {
   primary: '#0A66C2',        //  Blue - Main brand color
   primaryLight: '#3B82F6',   // Bright Blue - Lighter variant
   primaryDark: '#004182',    // Dark Blue - Darker variant
@@ -25,7 +25,7 @@ export const BrandColors = {
 /**
  * Semantic Colors - Contextual colors for different states
  */
-export const SemanticColors = {
+const SemanticColors = {
   success: '#10B981',        // Emerald-500 - Success states
   warning: '#F59E0B',        // Amber-500 - Warning states
   error: '#EF4444',          // Red-500 - Error states
@@ -35,7 +35,7 @@ export const SemanticColors = {
 /**
  * Functional Colors - Special purpose colors
  */
-export const FunctionalColors = {
+const FunctionalColors = {
   purple: '#8B5CF6',         // Violet-500 - Feature highlights
   pink: '#EC4899',           // Pink-500 - Creative elements
   orange: '#F97316',         // Orange-500 - Energy/urgency

@@ -101,7 +101,7 @@ function CourseCard({ course, onPress }: CourseCardProps) {
           style={{ color: colors.text }}
           numberOfLines={2}
         >
-          {course.title} test
+          {course.title}
         </Text>
 
         {/* Instructor */}

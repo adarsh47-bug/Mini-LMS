@@ -1,16 +1,9 @@
-import { getThemeColors, type ColorTheme, type ThemeMode } from '@/src/constants';
+import { getThemeColors, STORAGE_KEYS, type ColorTheme, type ThemeMode } from '@/src/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as NavigationBar from 'expo-navigation-bar';
 import { StatusBar } from 'expo-status-bar';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Appearance, ColorSchemeName, Platform } from 'react-native';
-
-// ============================================================================
-// CONSTANTS
-// ============================================================================
-
-/** Storage key for theme preference */
-const THEME_STORAGE_KEY = '@app_theme_preference';
 
 // ============================================================================
 // TYPES
@@ -69,7 +62,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   /** Save theme preference to AsyncStorage */
   const saveThemePreference = useCallback(async (pref: ThemePreference) => {
     try {
-      await AsyncStorage.setItem(THEME_STORAGE_KEY, pref);
+      await AsyncStorage.setItem(STORAGE_KEYS.themePreference, pref);
     } catch (error) {
       console.error('Failed to save theme preference:', error);
       // Non-critical error - app continues to function
@@ -84,7 +77,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const loadThemePreference = async () => {
       try {
-        const savedPreference = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+        const savedPreference = await AsyncStorage.getItem(STORAGE_KEYS.themePreference);
         if (savedPreference && ['light', 'dark', 'system'].includes(savedPreference)) {
           const pref = savedPreference as ThemePreference;
           setPreference(pref);

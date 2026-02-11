@@ -28,8 +28,7 @@ export function useNetworkMonitor() {
     // Check immediately
     checkNetworkStatus();
 
-    // Poll every 3 seconds
-    intervalId = setInterval(checkNetworkStatus, 3000);
+    intervalId = setInterval(checkNetworkStatus, 5000);
 
     return () => {
       if (intervalId) {

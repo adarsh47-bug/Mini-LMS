@@ -6,8 +6,9 @@
  * Based on Expo Router authentication pattern.
  */
 
-import { useEffect, useCallback, useReducer } from 'react';
+import { setStorageItemAsync } from '@/src/utils';
 import * as SecureStore from 'expo-secure-store';
+import { useCallback, useEffect, useReducer } from 'react';
 import { Platform } from 'react-native';
 
 type UseStateHook<T> = [[boolean, T | null], (value: T | null) => void];
@@ -21,26 +22,7 @@ function useAsyncState<T>(
   ) as UseStateHook<T>;
 }
 
-export async function setStorageItemAsync(key: string, value: string | null): Promise<void> {
-  if (Platform.OS === 'web') {
-    try {
-      if (value === null) {
-        localStorage.removeItem(key);
-      } else {
-        localStorage.setItem(key, value);
-      }
-    } catch (e) {
-      console.error('Local storage is unavailable:', e);
-    }
-    return;
-  }
 
-  if (value === null) {
-    await SecureStore.deleteItemAsync(key);
-  } else {
-    await SecureStore.setItemAsync(key, value);
-  }
-}
 
 export function useStorageState(key: string): UseStateHook<string> {
   const [state, setState] = useAsyncState<string>();

@@ -12,7 +12,7 @@ import { useCourseStore } from '@/src/stores';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
@@ -60,6 +60,16 @@ const CourseWebViewScreen = () => {
     webViewRef.current?.reload();
   }, []);
 
+  /** Sanitize strings for safe HTML injection — prevent XSS */
+  const escapeHtml = useCallback((str: string): string => {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }, []);
+
   // Generate HTML content for the WebView
   const htmlContent = useMemo(() => {
     const course = courseDetail;
@@ -71,6 +81,14 @@ const CourseWebViewScreen = () => {
     const surface = colors.surface;
     const border = colors.border;
     const primary = colors.primary;
+
+    // Sanitize all user-facing data from API
+    const safeTitle = escapeHtml(course.title);
+    const safeCategory = escapeHtml(course.category.replace(/-/g, ' '));
+    const safeDescription = escapeHtml(course.description);
+    const safeInstructorName = escapeHtml(course.instructor.name);
+    const safeInstructorEmail = escapeHtml(course.instructor.email);
+    const safeInstructorLocation = escapeHtml(course.instructor.location);
 
     return `
 <!DOCTYPE html>
@@ -186,24 +204,24 @@ const CourseWebViewScreen = () => {
 </head>
 <body>
   <div class="header">
-    <span class="category">${course.category.replace(/-/g, ' ')}</span>
-    <h1>${course.title}</h1>
-    <p class="meta">by ${course.instructor.name} · ⭐ ${course.rating.toFixed(1)} · ${course.stock} students</p>
+    <span class="category">${safeCategory}</span>
+    <h1>${safeTitle}</h1>
+    <p class="meta">by ${safeInstructorName} · ⭐ ${course.rating.toFixed(1)} · ${course.stock} students</p>
   </div>
 
   <div class="card">
     <h3>About This Course</h3>
-    <p>${course.description}</p>
+    <p>${safeDescription}</p>
   </div>
 
   <div class="card">
     <h3>Instructor</h3>
     <div class="instructor">
-      <img src="${course.instructor.avatar}" alt="${course.instructor.name}" />
+      <img src="${encodeURI(course.instructor.avatar)}" alt="${safeInstructorName}" />
       <div>
-        <div class="instructor-name">${course.instructor.name}</div>
-        <div class="instructor-location">${course.instructor.location}</div>
-        <div class="instructor-location">${course.instructor.email}</div>
+        <div class="instructor-name">${safeInstructorName}</div>
+        <div class="instructor-location">${safeInstructorLocation}</div>
+        <div class="instructor-location">${safeInstructorEmail}</div>
       </div>
     </div>
   </div>
@@ -239,11 +257,11 @@ const CourseWebViewScreen = () => {
   <div class="card" style="margin-top: 16px;">
     <h3>Course Curriculum</h3>
     <ul class="curriculum">
-      <li><span class="lesson-num">1</span> Introduction to ${course.title}</li>
-      <li><span class="lesson-num">2</span> Getting Started with ${course.category.replace(/-/g, ' ')}</li>
+      <li><span class="lesson-num">1</span> Introduction to ${safeTitle}</li>
+      <li><span class="lesson-num">2</span> Getting Started with ${safeCategory}</li>
       <li><span class="lesson-num">3</span> Core Concepts & Fundamentals</li>
       <li><span class="lesson-num">4</span> Hands-On Practice</li>
-      <li><span class="lesson-num">5</span> Advanced Techniques by ${course.instructor.name}</li>
+      <li><span class="lesson-num">5</span> Advanced Techniques by ${safeInstructorName}</li>
       <li><span class="lesson-num">6</span> Final Project & Assessment</li>
     </ul>
   </div>
@@ -269,7 +287,7 @@ const CourseWebViewScreen = () => {
   </script>
 </body>
 </html>`;
-  }, [courseDetail, colors]);
+  }, [courseDetail, colors, escapeHtml]);
 
   // WebView error state
   if (webViewError) {
@@ -326,7 +344,14 @@ const CourseWebViewScreen = () => {
           )}
           <WebView
             ref={webViewRef}
-            source={{ html: htmlContent }}
+            source={{
+              html: htmlContent,
+              headers: {
+                'X-App-Theme': colors.background === '#FFFFFF' ? 'light' : 'dark',
+                'X-App-Platform': Platform.OS,
+                'X-Course-Id': courseId || '',
+              },
+            }}
             style={{ flex: 1, backgroundColor: colors.background }}
             onMessage={handleMessage}
             onError={handleWebViewError}
@@ -337,9 +362,12 @@ const CourseWebViewScreen = () => {
             scalesPageToFit={false}
             originWhitelist={['*']}
             injectedJavaScript={`
-              // Send ready signal to native
+              // Send ready signal to native with course metadata
               if (window.ReactNativeWebView) {
-                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'READY' }));
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                  type: 'READY',
+                  courseId: '${courseId || ''}',
+                }));
               }
               true;
             `}

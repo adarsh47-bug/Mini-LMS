@@ -8,7 +8,8 @@
 
 import { ErrorBoundary, NetworkChangeNotification, NotificationContainer, OfflineIndicator } from '@/src/components';
 import { NotificationProvider, SessionProvider, ThemeProvider, useNotification, useSession, useTheme } from '@/src/context';
-import { useNetworkMonitor } from '@/src/hooks';
+import { useNetworkMonitor, useNotificationHandler } from '@/src/hooks';
+import { initializeNotifications } from '@/src/services';
 import { SplashScreen, Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
@@ -103,6 +104,14 @@ function GlobalUIComponents() {
 
   // Monitor network connectivity
   useNetworkMonitor();
+
+  // Handle notification navigation
+  useNotificationHandler();
+
+  // Initialize push notifications on mount
+  useEffect(() => {
+    initializeNotifications();
+  }, []);
 
   return (
     <>

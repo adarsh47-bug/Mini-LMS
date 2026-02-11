@@ -2,7 +2,7 @@ import { getTabBarHeight } from '@/src/constants';
 import { useNetworkStore } from '@/src/stores';
 import { NotificationItem } from '@/src/types';
 import { usePathname } from 'expo-router';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NotificationBanner } from './NotificationBanner';
@@ -13,16 +13,7 @@ interface NotificationContainerProps {
 }
 
 /**
- * NotificationContainer - Renders notifications above all content
- * 
- * Uses absolute positioning (no Modal) to allow app interaction while notifications are shown.
- * Follows the same pattern as NetworkChangeNotification for non-blocking notifications.
- * 
- * Architecture:
- * - Absolute positioning with high z-index for top-level rendering
- * - pointerEvents="box-none" to allow touches to pass through to underlying UI
- * - Banner itself captures touches only on interactive elements
- * - Shows one notification at a time (queue system)
+ * NotificationContainer - Renders notifications as banners at the top or bottom of the screen.
  */
 export const NotificationContainer: React.FC<NotificationContainerProps> = ({ notifications, dismiss }) => {
   const insets = useSafeAreaInsets();
@@ -33,7 +24,10 @@ export const NotificationContainer: React.FC<NotificationContainerProps> = ({ no
    * Tab Screen Detection Logic
    * works: /, /courses, /bookmarks, /profile
    */
-  const isTabScreen = /^\/(courses|bookmarks|profile)?($|\/|$)/.test(pathname ?? '')
+  const isTabScreen = useMemo(
+    () => /^\/(courses|bookmarks|profile)?($|\/$)/.test(pathname ?? ''),
+    [pathname],
+  );
 
   // Calculate proper bottom offset:
   // - On tab screens: account for tab bar height (base + safe area + offline indicator)

@@ -92,7 +92,7 @@ function ConfirmModal({
             <ThemedButton
               title={confirmText}
               onPress={onConfirm}
-              variant={variant === 'danger' ? 'primary' : 'primary'}
+              variant="primary"
               loading={loading}
               disabled={loading}
               style={variant === 'danger' ? { backgroundColor: colors.error } : undefined}

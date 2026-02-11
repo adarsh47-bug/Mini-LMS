@@ -8,6 +8,7 @@
 
 import { CourseCard } from '@/src/components';
 import { useTheme } from '@/src/context';
+import { useScrollToTop } from '@/src/hooks';
 import { useBookmarkStore, useCourseStore } from '@/src/stores';
 import type { CourseListItem } from '@/src/types';
 import { Ionicons } from '@expo/vector-icons';
@@ -26,6 +27,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const CourseListScreen = () => {
   const { colors } = useTheme();
+
+  const scrollRef = useScrollToTop();
 
   // Use individual selectors for proper reactivity
   const courses = useCourseStore((s) => s.courses);
@@ -262,6 +265,7 @@ const CourseListScreen = () => {
         </View>
       ) : (
         <LegendList
+          ref={scrollRef}
           data={filteredCourses}
           renderItem={renderCourseItem}
           keyExtractor={keyExtractor}

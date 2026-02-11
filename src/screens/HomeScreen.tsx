@@ -9,6 +9,7 @@
 import { ConfirmModal, CourseCard, ThemeToggle } from '@/src/components';
 import { LOGO, NAME } from '@/src/constants';
 import { useSession, useTheme } from '@/src/context';
+import { useScrollToTop } from '@/src/hooks';
 import { useBookmarkStore, useCourseStore } from '@/src/stores';
 import type { CourseListItem } from '@/src/types';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,7 +20,7 @@ import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 /** Stat card for dashboard */
-function StatCard({
+const StatCard = React.memo(function StatCard({
   icon,
   label,
   value,
@@ -47,7 +48,7 @@ function StatCard({
       <Text className="text-[11px] mt-0.5 text-center" style={{ color: color + 'CC' }} accessible={false}>{label}</Text>
     </View>
   );
-}
+});
 
 const HomeScreen = () => {
   const { colors } = useTheme();
@@ -55,6 +56,8 @@ const HomeScreen = () => {
   const [loggingOut, setLoggingOut] = useState(false);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  const scrollRef = useScrollToTop();
 
   const courses = useCourseStore((s) => s.courses);
   const isInitialized = useCourseStore((s) => s.isInitialized);
@@ -98,6 +101,7 @@ const HomeScreen = () => {
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }} edges={['top', 'left', 'right']}>
       <ScrollView
+        ref={scrollRef}
         contentContainerClassName="px-5 pb-8"
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -246,7 +250,7 @@ const HomeScreen = () => {
 };
 
 /** Quick action button */
-function QuickAction({
+const QuickAction = React.memo(function QuickAction({
   icon,
   label,
   colors,
@@ -272,6 +276,6 @@ function QuickAction({
       </Text>
     </Pressable>
   );
-}
+});
 
 export default HomeScreen;

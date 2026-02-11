@@ -5,7 +5,8 @@
  * automatic token refresh on 401, and retry logic.
  */
 
-import { STORAGE_KEYS, API_CONFIG } from '@/src/constants';
+import { API_CONFIG, STORAGE_KEYS } from '@/src/constants';
+import { setStorageItemAsync } from '@/src/utils';
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
@@ -16,6 +17,22 @@ import { Platform } from 'react-native';
 
 const BASE_URL = 'https://api.freeapi.app/api/v1';
 
+/** Status codes that should trigger a retry */
+const RETRYABLE_STATUS_CODES = new Set([408, 429, 500, 502, 503, 504]);
+
+/** Check if an error is retryable (network error or server error) */
+function isRetryableError(error: AxiosError): boolean {
+  // Network errors (no response)
+  if (!error.response) return true;
+  // Server errors
+  return RETRYABLE_STATUS_CODES.has(error.response.status);
+}
+
+/** Delay helper for retry backoff */
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export const apiClient = axios.create({
   baseURL: BASE_URL,
   timeout: API_CONFIG.timeout,
@@ -25,7 +42,7 @@ export const apiClient = axios.create({
 });
 
 // ============================================================================
-// TOKEN HELPERS
+// TOKEN HELPERS (reads use SecureStore directly, writes use shared utility)
 // ============================================================================
 
 async function getToken(key: string): Promise<string | null> {
@@ -39,26 +56,6 @@ async function getToken(key: string): Promise<string | null> {
   return SecureStore.getItemAsync(key);
 }
 
-async function setToken(key: string, value: string | null): Promise<void> {
-  if (Platform.OS === 'web') {
-    try {
-      if (value === null) {
-        localStorage.removeItem(key);
-      } else {
-        localStorage.setItem(key, value);
-      }
-    } catch (e) {
-      console.error('Local storage is unavailable:', e);
-    }
-    return;
-  }
-  if (value === null) {
-    await SecureStore.deleteItemAsync(key);
-  } else {
-    await SecureStore.setItemAsync(key, value);
-  }
-}
-
 export async function getAccessToken(): Promise<string | null> {
   return getToken(STORAGE_KEYS.accessToken);
 }
@@ -68,18 +65,18 @@ export async function getRefreshToken(): Promise<string | null> {
 }
 
 export async function setAccessToken(token: string | null): Promise<void> {
-  return setToken(STORAGE_KEYS.accessToken, token);
+  return setStorageItemAsync(STORAGE_KEYS.accessToken, token);
 }
 
 export async function setRefreshToken(token: string | null): Promise<void> {
-  return setToken(STORAGE_KEYS.refreshToken, token);
+  return setStorageItemAsync(STORAGE_KEYS.refreshToken, token);
 }
 
 export async function clearTokens(): Promise<void> {
-  await setToken(STORAGE_KEYS.accessToken, null);
-  await setToken(STORAGE_KEYS.refreshToken, null);
-  await setToken(STORAGE_KEYS.user, null);
-  await setToken(STORAGE_KEYS.session, null);
+  await setStorageItemAsync(STORAGE_KEYS.accessToken, null);
+  await setStorageItemAsync(STORAGE_KEYS.refreshToken, null);
+  await setStorageItemAsync(STORAGE_KEYS.user, null);
+  await setStorageItemAsync(STORAGE_KEYS.session, null);
 }
 
 // ============================================================================
@@ -184,5 +181,38 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
+  },
+);
+
+// ============================================================================
+// RESPONSE INTERCEPTOR — Retry on transient failures (5xx / network errors)
+// ============================================================================
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const config = error.config as InternalAxiosRequestConfig & {
+      _retryCount?: number;
+      _retry?: boolean;
+    };
+
+    // Skip retry for auth refresh failures or non-retryable errors
+    if (!config || config._retry || !isRetryableError(error)) {
+      return Promise.reject(error);
+    }
+
+    const retryCount = config._retryCount ?? 0;
+
+    if (retryCount >= API_CONFIG.retryAttempts) {
+      return Promise.reject(error);
+    }
+
+    config._retryCount = retryCount + 1;
+
+    // Exponential backoff: retryDelay * 2^retryCount
+    const backoff = API_CONFIG.retryDelay * Math.pow(2, retryCount);
+    await delay(backoff);
+
+    return apiClient(config);
   },
 );

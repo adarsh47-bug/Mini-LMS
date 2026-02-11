@@ -20,6 +20,7 @@ export const STORAGE_KEYS = {
   session: 'session',
   user: 'user_data',
   themePreference: '@app_theme_preference',
+  optimisticAvatar: '@optimistic_avatar',
 } as const;
 
 // ============================================================================

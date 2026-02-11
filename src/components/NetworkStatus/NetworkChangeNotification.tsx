@@ -2,42 +2,44 @@ import { useTheme } from '@/src/context';
 import { useNetworkStore } from '@/src/stores';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 /**
  * YouTube-style "Back Online" notification
- * Shows when connection is restored after being offline
+ * Shows when connection is restored after being offline.
+ * Uses react-native-reanimated for consistent animation approach.
  */
 export const NetworkChangeNotification: React.FC = () => {
   const { colors } = useTheme();
   const isConnected = useNetworkStore(state => state.isConnected);
   const [showNotification, setShowNotification] = useState(false);
   const [wasOffline, setWasOffline] = useState(false);
-  const slideAnim = useRef(new Animated.Value(-100)).current;
+  const translateY = useSharedValue(-100);
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
   const hide = useCallback(() => {
-    Animated.timing(slideAnim, {
-      toValue: -100,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      setShowNotification(false);
-    });
-  }, [slideAnim]);
+    translateY.value = withTiming(-100, { duration: 300 });
+    // Dismiss notification after animation completes
+    setTimeout(() => setShowNotification(false), 300);
+  }, [translateY]);
 
   const show = useCallback(() => {
     setShowNotification(true);
-    Animated.timing(slideAnim, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+    translateY.value = withTiming(0, { duration: 300 });
 
     // Auto-hide after 4 seconds
-    timeoutRef.current = setTimeout(hide, 4000) as any;
-  }, [slideAnim, hide]);
+    timeoutRef.current = setTimeout(hide, 4000) as unknown as NodeJS.Timeout;
+  }, [translateY, hide]);
 
   useEffect(() => {
     if (!isConnected) {
@@ -63,14 +65,16 @@ export const NetworkChangeNotification: React.FC = () => {
 
   return (
     <Animated.View
-      style={{
-        transform: [{ translateY: slideAnim }],
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 100,
-      }}
+      style={[
+        {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 100,
+        },
+        animatedStyle,
+      ]}
     >
       <SafeAreaView edges={['top']}>
         <View
