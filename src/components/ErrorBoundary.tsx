@@ -115,7 +115,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 lineHeight: 20,
               }}
             >
-              The app encountered an unexpected error. Don't worry, your data is safe.
+              The app encountered an unexpected error. Don&apos;t worry, your data is safe.
             </Text>
 
             {/* Error Details (only in dev mode) */}

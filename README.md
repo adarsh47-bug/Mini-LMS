@@ -8,16 +8,46 @@ Built for the React Native Developer Assignment - showcasing expertise in authen
 
 ## 📱 Screenshots
 
-_Note: Screenshots will be added after building the APK_
+### Welcome & Authentication
 
-**Main Screens:**
-- Login/Register with validation
-- Course Catalog with search
-- Course Details with enrollment
-- Bookmarks management
-- User Profile with stats
-- WebView course content viewer
-- Notifications and offline mode
+<div align="center">
+  <img src="documentation/screenshots/1_intro.jpeg" width="130" alt="Intro Screen" />
+  <img src="documentation/screenshots/2_register.jpeg" width="130" alt="Register Screen" />
+  <img src="documentation/screenshots/3_login.jpeg" width="130" alt="Login Screen" />
+</div>
+
+**Intro Screen** • **Registration** • **Login**
+
+### Main Features
+
+<div align="center">
+  <img src="documentation/screenshots/4_home.jpeg" width="130" alt="Home Screen" />
+  <img src="documentation/screenshots/5_courses.jpeg" width="130" alt="Courses List" />
+  <img src="documentation/screenshots/6_bookmarks.jpeg" width="130" alt="Bookmarks" />
+</div>
+
+**Home** • **Course Catalog** • **Bookmarks**
+
+### Course Management & Profile
+
+<div align="center">
+  <img src="documentation/screenshots/7_profile.jpeg" width="130" alt="Profile Screen" />
+  <img src="documentation/screenshots/8_course_preview.jpeg" width="130" alt="Course Preview" />
+  <img src="documentation/screenshots/9_course_details.jpeg" width="130" alt="Course Details" />
+</div>
+
+**User Profile** • **Course Preview** • **Course Details**
+
+---
+
+## 📲 Download APK
+
+**Ready to test? Download the production APK:**
+
+[📲 Download mini_lms.apk](https://expo.dev/artifacts/eas/32bZCNeFgQpttzxyYTcAbh.apk)
+
+
+> **Note:** You may need to enable "Install from Unknown Sources" in your Android settings to install the APK.
 
 ---
 

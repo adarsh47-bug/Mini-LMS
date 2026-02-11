@@ -167,7 +167,7 @@ const LoginScreen = () => {
         {/* Footer */}
         <View className="flex-row justify-center items-center">
           <Text className="text-sm" style={{ color: colors.textSecondary }}>
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
           </Text>
           <Pressable
             onPress={handleGoToRegister}

@@ -52,6 +52,7 @@ __tests__/
 *.spec.tsx
 
 # documentation (not needed in builds)
+documentation/
 *.md
 !README.md
 

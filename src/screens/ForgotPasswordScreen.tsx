@@ -66,7 +66,7 @@ const ForgotPasswordScreen = () => {
           Check Your Email
         </Text>
         <Text className="text-base text-center leading-6 mb-8" style={{ color: colors.textSecondary }}>
-          We've sent password reset instructions to{' \n'}
+          We&apos;ve sent password reset instructions to{' \n'}
           <Text className="font-semibold" style={{ color: colors.text }}>{emailValue.trim().toLowerCase()}</Text>
         </Text>
         <ThemedButton title="Back to Login" onPress={handleBack} size="md" />
@@ -105,7 +105,7 @@ const ForgotPasswordScreen = () => {
             Forgot Password?
           </Text>
           <Text className="text-[15px] leading-6" style={{ color: colors.textSecondary }}>
-            Enter the email associated with your account and we'll send instructions to reset your password.
+            Enter the email associated with your account and we&apos;ll send instructions to reset your password.
           </Text>
         </View>
 

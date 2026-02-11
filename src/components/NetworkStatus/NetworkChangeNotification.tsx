@@ -95,7 +95,7 @@ export const NetworkChangeNotification: React.FC = () => {
                 className="text-sm font-medium ml-2"
                 accessible={false}
               >
-                You're back online!
+                You&apos;re back online!
               </Text>
             </View>
 
