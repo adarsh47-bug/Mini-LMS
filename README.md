@@ -6,6 +6,25 @@ Built for the React Native Developer Assignment - showcasing expertise in authen
 
 ---
 
+## 🎬 Demo Video
+
+**Watch the complete app walkthrough (3-5 minutes):**
+
+<a href="https://youtu.be/7WbA9WtP0-A">
+  <img src="assets/images/icon.png" alt="MLMS - Mobile App Walkthrough" width="100" />
+</a>
+
+[📺 Click to watch on YouTube](https://youtu.be/7WbA9WtP0-A)
+
+**What's covered:**
+- Authentication & User Registration
+- Course Discovery & Browsing
+- Bookmarks & Enrollment
+- User Profile Management
+- Dark Mode & Real-time Features
+
+---
+
 ## 📱 Screenshots
 
 ### Welcome & Authentication
